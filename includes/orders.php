@@ -37,7 +37,7 @@ class Orders{
 
 
         $db = new Database();
-        $items = $this->get_object_orders();
+        $items = $this->get_object_orders($page);
 
         $data = [];
         foreach ($items->orders as $key => $item) {

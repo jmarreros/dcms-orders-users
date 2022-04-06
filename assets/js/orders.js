@@ -5,12 +5,14 @@ var vm = new Vue({
     data: {
         results: [],
         status: 0,
+        page : 1,
     },
     created: function(){
-                this.loadData(2)
+            this.loadData(this.page)
     },
     methods: {
-        loadData: function (currentPage) {
+        loadData(page) {
+
             j.ajax({
                 type:"post",
                 url: dcmsOrders.ajaxurl,
@@ -18,19 +20,15 @@ var vm = new Vue({
                 data: {
                     action : 'dcms_ajax_list_orders',
                     nonce : dcmsOrders.nonce,
-                    page : currentPage
+                    page
                 },
                 success:function(res){
-                    console.log(res.data)
-                    console.log(res.status)
+                    if ( res.status == 0 ) console.log(res)
 
                     vm.results = res.data
                     vm.status = res.status
-                },
-                error: function(error){
-                    vm.results = 'Error';
                 }
-            });
+            })
         }
     }
 })
