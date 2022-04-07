@@ -22,19 +22,6 @@ class Enqueue{
                 DCMS_ORDERS_URL.'assets/css/orders.css',
                 [],
                 DCMS_ORDERS_VERSION );
-
-        // Order
-        wp_register_script('dcms-order-script',
-                DCMS_ORDERS_URL.'assets/js/order.js',
-                ['vue.js','jquery'],
-                DCMS_ORDERS_VERSION,
-                true);
-
-        wp_register_style('dcms-order-style',
-                DCMS_ORDERS_URL.'assets/css/order.css',
-                [],
-                DCMS_ORDERS_VERSION );
-
     }
 
 

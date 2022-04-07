@@ -21,19 +21,19 @@ Class Shortcode{
 
     public function create_orders_user( $atts, $content ){
 
-        $id_order = $_GET["order"]??0;
+        $order_id = $_GET["order"]??0;
         $current_url = Helper::get_current_url();
 
-        error_log(print_r($id_order,true));
+        error_log(print_r($order_id,true));
 
-        if ( ! $id_order ){ // Show orders
+        if ( ! $order_id ){ // Show orders
             $this->enqueue_scripts_orders();
             ob_start();
                 include_once DCMS_ORDERS_PATH.'views/templates/list-orders.php';
                 $html_code = ob_get_contents();
             ob_end_clean();
 
-        } elseif ( $id_order ) { // Show order
+        } elseif ( $order_id ) { // Show order
             $this->enqueue_scripts_order();
             ob_start();
                 include_once DCMS_ORDERS_PATH.'views/templates/order-detail.php';

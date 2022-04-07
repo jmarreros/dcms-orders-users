@@ -19,8 +19,6 @@ use dcms\orders\includes\Enqueue;
 use dcms\orders\includes\Submenu;
 use dcms\orders\includes\Shortcode;
 use dcms\orders\includes\Orders;
-use dcms\orders\includes\Order;
-
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -80,7 +78,6 @@ final class Loader{
 		new SubMenu();
 		new Shortcode();
 		new Orders();
-		new Order();
 	}
 
 }
