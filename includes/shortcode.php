@@ -4,6 +4,7 @@ namespace dcms\orders\includes;
 
 use dcms\orders\includes\Orders;
 use dcms\orders\includes\Database;
+use dcms\orders\helpers\Helper;
 
 // Clase para que crea un shortcode para la visualización de detalle de órdenes de un usuario
 // El shortcode debe ser usadado en los archivos de la plantilla para que se ve en el área de cliente
@@ -21,26 +22,29 @@ Class Shortcode{
     public function create_orders_user( $atts, $content ){
 
         $id_order = $_GET["order"]??0;
+        $current_url = Helper::get_current_url();
 
-        if ( ! $id_order ){
+        error_log(print_r($id_order,true));
+
+        if ( ! $id_order ){ // Show orders
             $this->enqueue_scripts_orders();
             ob_start();
                 include_once DCMS_ORDERS_PATH.'views/templates/list-orders.php';
                 $html_code = ob_get_contents();
             ob_end_clean();
 
-        } elseif ( $id_order ) {
+        } elseif ( $id_order ) { // Show order
+            $this->enqueue_scripts_order();
             ob_start();
                 include_once DCMS_ORDERS_PATH.'views/templates/order-detail.php';
                 $html_code = ob_get_contents();
             ob_end_clean();
         }
 
-
         return $html_code;
-
     }
 
+    // Enqueue orders
     private function enqueue_scripts_orders(){
         wp_enqueue_style('dcms-orders-style');
         wp_enqueue_script('dcms-orders-script');
@@ -49,6 +53,17 @@ Class Shortcode{
                             'dcmsOrders',
                             [ 'ajaxurl'=>admin_url('admin-ajax.php'),
                               'nonce' => wp_create_nonce('ajax-nonce-orders')]);
+    }
+
+    // Enqueue order
+    private function enqueue_scripts_order(){
+        wp_enqueue_style('dcms-order-style');
+        wp_enqueue_script('dcms-order-script');
+
+        wp_localize_script('dcms-order-script',
+                            'dcmsOrder',
+                            [ 'ajaxurl'=>admin_url('admin-ajax.php'),
+                              'nonce' => wp_create_nonce('ajax-nonce-order')]);
     }
 
 }

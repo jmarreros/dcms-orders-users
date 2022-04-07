@@ -1,4 +1,6 @@
-
+<?php
+// $current_url : Current page url
+?>
 <div id="orders-user">
 
     <table id="list-orders">
@@ -18,7 +20,7 @@
             <td v-html="item.total"></td>
             <td>
                 <section class="container-actions" :class="loading && 'disabled'">
-                    <a href="#">Ver</a>
+                    <a :href="'<?= $current_url ?>?order=' + item.id" >Ver</a>
                     <a href="#">Pagar</a>
                     <a href="#">Adjuntar</a>
                 </section>

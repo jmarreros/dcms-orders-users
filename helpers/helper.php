@@ -17,4 +17,9 @@ class Helper{
         }
     }
 
+    public static function get_current_url(){
+        global $wp;
+        return home_url( $wp->request );
+    }
+
 }

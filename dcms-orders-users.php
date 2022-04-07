@@ -19,6 +19,8 @@ use dcms\orders\includes\Enqueue;
 use dcms\orders\includes\Submenu;
 use dcms\orders\includes\Shortcode;
 use dcms\orders\includes\Orders;
+use dcms\orders\includes\Order;
+
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -45,6 +47,7 @@ final class Loader{
 		include_once ( DCMS_ORDERS_PATH . '/includes/submenu.php');
 		include_once ( DCMS_ORDERS_PATH . '/includes/shortcode.php');
 		include_once ( DCMS_ORDERS_PATH . '/includes/orders.php');
+		include_once ( DCMS_ORDERS_PATH . '/includes/order.php');
 		include_once ( DCMS_ORDERS_PATH . '/includes/database.php');
 		include_once ( DCMS_ORDERS_PATH . '/includes/enqueue.php');
 	}
@@ -77,6 +80,7 @@ final class Loader{
 		new SubMenu();
 		new Shortcode();
 		new Orders();
+		new Order();
 	}
 
 }

@@ -62,17 +62,4 @@ class Orders{
         wp_die();
     }
 
-
-    // Aux - Security, verify nonce
-    // private function validate_nonce( $nonce_name ){
-    //     if ( ! wp_verify_nonce( $_POST['nonce'], $nonce_name ) ) {
-    //         $res = [
-    //             'status' => 0,
-    //             'message' => '✋ Error nonce validation!!'
-    //         ];
-    //         echo json_encode($res);
-    //         wp_die();
-    //     }
-    // }
-
 }
