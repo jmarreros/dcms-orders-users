@@ -1,5 +1,6 @@
 
 <div id="orders-user">
+
     <table id="list-orders">
         <tr>
             <th>Pedido</th>
@@ -19,13 +20,14 @@
         </tr>
     </table>
     <div v-if="!results.length && !loading" class="no-items">No tienes aún ninguna orden</div>
-    <div v-if="loading" class="loading-container">
-        <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
-    </div>
 
-
-    <section id="pagination" v-if="results.length">
-        <a id="prev" href="#">Anterior</a>
-        <a id="next" href="#">Siguiente</a>
+    <section class="footer-container">
+        <section v-if="loading" class="loading-container">
+            <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+        </section>
+        <section class="pagination-container" v-if="results.length" :class="!loading && 'fullwidth'">
+            <a id="prev" href="#" v-on:click="prevPage" v-if="page > 1" :class="loading && 'disabled'">Anterior</a>
+            <a id="next" href="#"  v-on:click="nextPage" v-if="page < totalPages" :class="loading && 'disabled'">Siguiente</a>
+        </section>
     </section>
 </div>

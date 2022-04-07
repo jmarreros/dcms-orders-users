@@ -1,18 +1,21 @@
 var j = jQuery.noConflict();
 
-var vm = new Vue({
+var vmorders = new Vue({
     el: '#orders-user',
     data: {
         results: [],
         status: 0,
-        page : 10,
+        page : 1,
         loading: true,
+        totalPages: 0
     },
     created: function(){
             this.loadData(this.page)
     },
     methods: {
         loadData(page) {
+
+            this.loading = true
 
             j.ajax({
                 type:"post",
@@ -26,11 +29,20 @@ var vm = new Vue({
                 success:function(res){
                     if ( res.status == 0 ) console.log(res)
 
-                    vm.results = res.data
-                    vm.status = res.status
-                    vm.loading = false
+                    vmorders.results = res.data
+                    vmorders.status = res.status
+                    vmorders.loading = false
+                    vmorders.totalPages = res.total_pages
                 }
             })
+        },
+        nextPage(){
+            this.page++
+            this.loadData(this.page)
+        },
+        prevPage(){
+            this.page--
+            this.loadData(this.page)
         }
     }
 })

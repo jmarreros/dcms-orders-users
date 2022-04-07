@@ -53,7 +53,8 @@ class Orders{
 
         $res = [
             'status' => 1,
-            'message' => "Página $page",
+            'message' => "Página $page de {$items->max_num_pages}",
+            'total_pages' => $items->max_num_pages,
             'data' => $data
         ];
 
