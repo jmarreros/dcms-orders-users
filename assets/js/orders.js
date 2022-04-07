@@ -5,7 +5,8 @@ var vm = new Vue({
     data: {
         results: [],
         status: 0,
-        page : 1,
+        page : 10,
+        loading: true,
     },
     created: function(){
             this.loadData(this.page)
@@ -27,6 +28,7 @@ var vm = new Vue({
 
                     vm.results = res.data
                     vm.status = res.status
+                    vm.loading = false
                 }
             })
         }
