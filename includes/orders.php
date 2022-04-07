@@ -3,6 +3,7 @@
 namespace dcms\orders\includes;
 
 use dcms\orders\includes\Database;
+use dcms\orders\helpers\Helper;
 
 class Orders{
 
@@ -18,7 +19,7 @@ class Orders{
 
         $args = [ 'customer_id' => $id_user,
                   'paginate' => true,
-                  'limit' => 2,
+                //   'limit' => 2,
                   'paged' => $page
                 ];
 
@@ -30,11 +31,10 @@ class Orders{
     // List orders by user
     public function dcms_list_orders(){
           // Validate nonce
-        $this->validate_nonce('ajax-nonce-orders');
+        Helper::validate_nonce('ajax-nonce-orders');
 
         $res = [];
         $page  = $_POST['page']??1;
-
 
         $db = new Database();
         $items = $this->get_object_orders($page);
@@ -64,15 +64,15 @@ class Orders{
 
 
     // Aux - Security, verify nonce
-    private function validate_nonce( $nonce_name ){
-        if ( ! wp_verify_nonce( $_POST['nonce'], $nonce_name ) ) {
-            $res = [
-                'status' => 0,
-                'message' => '✋ Error nonce validation!!'
-            ];
-            echo json_encode($res);
-            wp_die();
-        }
-    }
+    // private function validate_nonce( $nonce_name ){
+    //     if ( ! wp_verify_nonce( $_POST['nonce'], $nonce_name ) ) {
+    //         $res = [
+    //             'status' => 0,
+    //             'message' => '✋ Error nonce validation!!'
+    //         ];
+    //         echo json_encode($res);
+    //         wp_die();
+    //     }
+    // }
 
 }

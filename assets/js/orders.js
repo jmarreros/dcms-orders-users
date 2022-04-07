@@ -14,9 +14,7 @@ var vmorders = new Vue({
     },
     methods: {
         loadData(page) {
-
             this.loading = true
-
             j.ajax({
                 type:"post",
                 url: dcmsOrders.ajaxurl,
@@ -27,11 +25,14 @@ var vmorders = new Vue({
                     page
                 },
                 success:function(res){
-                    if ( res.status == 0 ) console.log(res)
+                    if ( res.status == 0 ) {
+                        console.log(res)
+                        return
+                    }
 
+                    vmorders.loading = false
                     vmorders.results = res.data
                     vmorders.status = res.status
-                    vmorders.loading = false
                     vmorders.totalPages = res.total_pages
                 }
             })
@@ -46,36 +47,4 @@ var vmorders = new Vue({
         }
     }
 })
-
-
-
-
-
-// (function($){
-
-
-//     $( document ).ready(function() {
-
-//         $.ajax({
-// 			url : dcmsOrders.ajaxurl,
-// 			type: 'post',
-//             dataType: 'json',
-// 			data: {
-// 				action : 'dcms_ajax_list_orders',
-//                 nonce : dcmsOrders.nonce,
-// 				page: 1
-// 			},
-// 			beforeSend: function(){
-
-// 			},
-// 			success: function(res){
-//                 // res = JSON.parse(res);
-// 				console.log(res)
-// 			}
-
-// 		});
-//     });
-
-
-// })(jQuery);
 

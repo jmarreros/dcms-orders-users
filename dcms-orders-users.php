@@ -20,7 +20,6 @@ use dcms\orders\includes\Submenu;
 use dcms\orders\includes\Shortcode;
 use dcms\orders\includes\Orders;
 
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -84,5 +83,3 @@ final class Loader{
 
 $dcms_orders_process = new Loader();
 $dcms_orders_process->init();
-
-

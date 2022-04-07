@@ -20,19 +20,28 @@ Class Shortcode{
 
     public function create_orders_user( $atts, $content ){
 
-        $this->enqueue_scripts();
+        $id_order = $_GET["order"]??0;
 
-        ob_start();
-            include_once DCMS_ORDERS_PATH.'views/templates/list-orders.php';
+        if ( ! $id_order ){
+            $this->enqueue_scripts_orders();
+            ob_start();
+                include_once DCMS_ORDERS_PATH.'views/templates/list-orders.php';
+                $html_code = ob_get_contents();
+            ob_end_clean();
 
-            $html_code = ob_get_contents();
-        ob_end_clean();
+        } elseif ( $id_order ) {
+            ob_start();
+                include_once DCMS_ORDERS_PATH.'views/templates/order-detail.php';
+                $html_code = ob_get_contents();
+            ob_end_clean();
+        }
+
 
         return $html_code;
 
     }
 
-    private function enqueue_scripts(){
+    private function enqueue_scripts_orders(){
         wp_enqueue_style('dcms-orders-style');
         wp_enqueue_script('dcms-orders-script');
 

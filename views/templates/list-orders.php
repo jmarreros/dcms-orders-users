@@ -16,7 +16,13 @@
             <td>{{ item.status }}</td>
             <td>{{ item.deposit }}</td>
             <td v-html="item.total"></td>
-            <td></td>
+            <td>
+                <section class="container-actions" :class="loading && 'disabled'">
+                    <a href="#">Ver</a>
+                    <a href="#">Pagar</a>
+                    <a href="#">Adjuntar</a>
+                </section>
+            </td>
         </tr>
     </table>
     <div v-if="!results.length && !loading" class="no-items">No tienes aún ninguna orden</div>
