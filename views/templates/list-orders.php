@@ -16,13 +16,13 @@
             <td>{{ item.id }}</td>
             <td>{{ item.date }}</td>
             <td>{{ item.status }}</td>
-            <td>{{ item.deposit }}</td>
+            <td>{{ item.deposit ? 'Si' : 'No' }}</td>
             <td v-html="item.total"></td>
             <td>
                 <section class="container-actions" :class="loading && 'disabled'">
                     <a :href="'<?= $current_url ?>?order=' + item.id" >Ver</a>
-                    <a href="#">Pagar</a>
                     <a href="#">Adjuntar</a>
+                    <a href="#">Pagar</a>
                 </section>
             </td>
         </tr>

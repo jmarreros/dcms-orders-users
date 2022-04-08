@@ -19,7 +19,7 @@ class Orders{
 
         $args = [ 'customer_id' => $id_user,
                   'paginate' => true,
-                //   'limit' => 2,
+                  'limit' => 2,
                   'paged' => $page
                 ];
 
@@ -48,8 +48,18 @@ class Orders{
             $data[$key]['date'] = wc_format_datetime( $item->get_date_created() );
             $data[$key]['total'] = wc_price($item->get_total());
             $data[$key]['deposit'] = $db->order_has_deposits($order_id);
-        }
+            $data[$key]['payment_url'] = '';
 
+            // Conditional for showing payment link
+            if ( $item->get_status() == 'on-hold' &&  $data[$key]['deposit']){
+                $data_payment =  $db->data_partial_payment($order_id);
+
+                if ( $data_payment ){
+                    $url_payment = $this->build_url_payment($data_payment);
+                    $data[$key]['payment_url'] = $url_payment;
+                }
+            }
+        }
 
         $res = [
             'status' => 1,
@@ -60,6 +70,19 @@ class Orders{
 
         echo json_encode($res);
         wp_die();
+    }
+
+
+    // Auxiliar function for building the url partial payment
+    private function build_url_payment($data_payment){
+        if ( ! $data_payment ) return '';
+
+        $id = $data_payment['ID'];
+        $key = $data_payment['key_url'];
+
+        $url = "checkout/order-pay/{$id}/?pay_for_order=true&key={$key}";
+
+        return $url;
     }
 
 }

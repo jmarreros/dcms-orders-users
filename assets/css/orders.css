@@ -64,3 +64,69 @@
       transform: rotate(360deg);
     }
   }
+
+
+
+
+.order-detail .order-resume{
+  margin:40px 0;
+  padding-bottom: 30px;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+}
+
+
+.order-detail .order_details.shop_table{
+  margin-bottom: 50px;
+}
+
+.order-detail .order_details.shop_table,
+.order-detail .order_details.shop_table td{
+  border:1px solid #ccc;
+  max-width: 800px;
+}
+
+.order-detail .woocommerce_deposits_parent_order_summary th,
+.order-detail .order_details.shop_table th{
+  padding:5px 10px;
+  background-color:#555;
+  color:white;
+}
+
+.order-detail .order_details.shop_table tfoot th{
+  background-color:#eee;
+  color:grey;
+}
+
+.order-detail .order_details.shop_table tfoot th{
+  background-color:white;
+}
+
+.order-detail .order_details.shop_table tfoot td{
+  padding:5px;
+}
+
+.order-detail .woocommerce_deposits_parent_order_summary{
+  max-width: 800px;
+  margin-bottom: 50px;
+}
+
+.order-detail .order_details .woocommerce-table__product-name a{
+  pointer-events: none;
+  cursor: default;
+  color:black;
+}
+
+@media(max-width:992px){
+  .order-detail .order-resume{
+    line-height: 26px;
+    display: block;
+  }
+
+  .order-detail .order-resume > div:last-child{
+    margin-top: 16px;
+    text-align: right;
+  }
+
+}

@@ -45,7 +45,6 @@ final class Loader{
 		include_once ( DCMS_ORDERS_PATH . '/includes/submenu.php');
 		include_once ( DCMS_ORDERS_PATH . '/includes/shortcode.php');
 		include_once ( DCMS_ORDERS_PATH . '/includes/orders.php');
-		include_once ( DCMS_ORDERS_PATH . '/includes/order.php');
 		include_once ( DCMS_ORDERS_PATH . '/includes/database.php');
 		include_once ( DCMS_ORDERS_PATH . '/includes/enqueue.php');
 	}

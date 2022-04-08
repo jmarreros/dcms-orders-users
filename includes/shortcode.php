@@ -24,8 +24,6 @@ Class Shortcode{
         $order_id = $_GET["order"]??0;
         $current_url = Helper::get_current_url();
 
-        error_log(print_r($order_id,true));
-
         if ( ! $order_id ){ // Show orders
             $this->enqueue_scripts_orders();
             ob_start();
@@ -34,7 +32,7 @@ Class Shortcode{
             ob_end_clean();
 
         } elseif ( $order_id ) { // Show order
-            $this->enqueue_scripts_order();
+            wp_enqueue_style('dcms-orders-style');
             ob_start();
                 include_once DCMS_ORDERS_PATH.'views/templates/order-detail.php';
                 $html_code = ob_get_contents();
@@ -53,17 +51,6 @@ Class Shortcode{
                             'dcmsOrders',
                             [ 'ajaxurl'=>admin_url('admin-ajax.php'),
                               'nonce' => wp_create_nonce('ajax-nonce-orders')]);
-    }
-
-    // Enqueue order
-    private function enqueue_scripts_order(){
-        wp_enqueue_style('dcms-order-style');
-        wp_enqueue_script('dcms-order-script');
-
-        wp_localize_script('dcms-order-script',
-                            'dcmsOrder',
-                            [ 'ajaxurl'=>admin_url('admin-ajax.php'),
-                              'nonce' => wp_create_nonce('ajax-nonce-order')]);
     }
 
 }
