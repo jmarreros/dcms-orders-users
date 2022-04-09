@@ -19,6 +19,7 @@ use dcms\orders\includes\Enqueue;
 use dcms\orders\includes\Submenu;
 use dcms\orders\includes\Shortcode;
 use dcms\orders\includes\Orders;
+use dcms\orders\includes\Attachment;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -47,6 +48,7 @@ final class Loader{
 		include_once ( DCMS_ORDERS_PATH . '/includes/orders.php');
 		include_once ( DCMS_ORDERS_PATH . '/includes/database.php');
 		include_once ( DCMS_ORDERS_PATH . '/includes/enqueue.php');
+		include_once ( DCMS_ORDERS_PATH . '/includes/attachment.php');
 	}
 
 	// Load tex domain
@@ -77,6 +79,7 @@ final class Loader{
 		new SubMenu();
 		new Shortcode();
 		new Orders();
+		new Attachment();
 	}
 
 }

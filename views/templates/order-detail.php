@@ -2,22 +2,17 @@
 /**
  * Order details Summary
  *
- * This template displays a summary of original order details
- *
- * @package Webtomizer\WCDP\Templates
- * @version 2.5.6
+ * This template displays a summary of original order details, based in the original template plugin deposits
  *
  * $current_url : current url pass throughout shortcode
+ * $order: Pass order object
+ *
  */
 
 defined( 'ABSPATH' ) || exit;
 
-$order = wc_get_order( $order_id ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.OverrideProhibited
+// $order = wc_get_order( $order_id ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.OverrideProhibited
 
-// Validation order by user
-if ( ! $order || get_current_user_id() != $order->get_customer_id() ) {
-    return;
-}
 
 $order_items           = $order->get_items( apply_filters( 'woocommerce_purchase_order_item_types', 'line_item' ) );
 $show_purchase_note    = $order->has_status( apply_filters( 'woocommerce_purchase_note_order_statuses', array( 'completed', 'processing' ) ) );

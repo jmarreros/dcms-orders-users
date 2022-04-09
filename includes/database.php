@@ -23,7 +23,7 @@ class Database{
         return boolval( $this->wpdb->get_var($sql) );
     }
 
-    // Get the url payment for the next partial payment
+    // Get parameters url payment for the next partial payment
     public function data_partial_payment($id_order){
         $sql = "SELECT ID, post_password AS key_url FROM {$this->table_post}
                 WHERE post_parent = {$id_order}

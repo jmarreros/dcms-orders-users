@@ -1,5 +1,12 @@
 <?php
-// $current_url : Current page url
+/**
+ * Custom template for listing orders using Vue.js and Ajax
+ *
+ *  $current_url : Current page url
+ */
+
+defined( 'ABSPATH' ) || exit;
+
 ?>
 <div id="orders-user">
 
