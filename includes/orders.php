@@ -51,7 +51,7 @@ class Orders{
             $data[$key]['payment_url'] = '';
 
             // Conditional for showing payment link
-            if ( $item->get_status() == 'on-hold' &&  $data[$key]['deposit']){
+            if ( $item->get_status() == 'partially-paid' &&  $data[$key]['deposit']){
                 $data_payment =  $db->data_partial_payment($order_id);
 
                 if ( $data_payment ){
@@ -80,7 +80,7 @@ class Orders{
         $id = $data_payment['ID'];
         $key = $data_payment['key_url'];
 
-        $url = "checkout/order-pay/{$id}/?pay_for_order=true&key={$key}";
+        $url = get_home_url()."/checkout/order-pay/{$id}/?pay_for_order=true&key={$key}";
 
         return $url;
     }
