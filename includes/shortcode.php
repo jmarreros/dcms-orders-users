@@ -2,11 +2,10 @@
 
 namespace dcms\orders\includes;
 
-use dcms\orders\includes\Orders;
-use dcms\orders\includes\Database;
+use dcms\orders\includes\Enqueue;
 use dcms\orders\helpers\Helper;
 
-// Clase para que crea un shortcode para la visualización de detalle de órdenes de un usuario
+// Clase para que crea un shortcode para la visualización ordenes, detalle de orden y pantalla de adjuntos
 // El shortcode debe ser usadado en los archivos de la plantilla para que se ve en el área de cliente
 
 Class Shortcode{
@@ -28,12 +27,13 @@ Class Shortcode{
         $html_code = "";
 
         // Enqueu general style
-        wp_enqueue_style('dcms-orders-style');
+        Enqueue::enqueue_style();
 
         switch (true) {
 
             case ($order_id == 0): // List orders
-                $this->enqueue_scripts_orders();
+                Enqueue::enqueue_scripts_orders();
+
                 ob_start();
                     include_once DCMS_ORDERS_PATH.'views/templates/list-orders.php';
                     $html_code = ob_get_contents();
@@ -54,7 +54,8 @@ Class Shortcode{
                             break;
 
                         case 'attach': // Attachments order
-                            $this->enqueue_scripts_attachment();
+                            Enqueue::enqueue_scripts_attachment();
+
                             ob_start();
                                 include_once DCMS_ORDERS_PATH.'views/templates/file-attachment.php';
                                 $html_code = ob_get_contents();
@@ -66,26 +67,6 @@ Class Shortcode{
         }
 
         return $html_code;
-    }
-
-    // Enqueue orders
-    private function enqueue_scripts_orders(){
-        wp_enqueue_script('dcms-orders-script');
-
-        wp_localize_script('dcms-orders-script',
-                            'dcmsOrders',
-                            [ 'ajaxurl'=>admin_url('admin-ajax.php'),
-                              'nonce' => wp_create_nonce('ajax-nonce-orders')]);
-    }
-
-    // Enqueue attachments
-    private function enqueue_scripts_attachment(){
-        wp_enqueue_script('dcms-attachment-script');
-
-        wp_localize_script('dcms-attachment-script',
-                            'dcmsAttach',
-                            [ 'ajaxurl'=>admin_url('admin-ajax.php'),
-                              'nonce' => wp_create_nonce('ajax-nonce-attachment')]);
     }
 
 }

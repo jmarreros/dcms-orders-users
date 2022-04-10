@@ -32,5 +32,30 @@ class Enqueue{
                 DCMS_ORDERS_VERSION );
     }
 
+    public static function enqueue_style(){
+        wp_enqueue_style('dcms-orders-style');
+    }
+
+    // Enqueue script orders
+    public static function enqueue_scripts_orders(){
+        wp_enqueue_script('dcms-orders-script');
+
+        wp_localize_script('dcms-orders-script',
+                            'dcmsOrders',
+                            [ 'ajaxurl'=>admin_url('admin-ajax.php'),
+                                'nonce' => wp_create_nonce('ajax-nonce-orders')]);
+    }
+
+    // Enqueue script attachments
+    public static function enqueue_scripts_attachment(){
+        wp_enqueue_script('dcms-attachment-script');
+
+        wp_localize_script('dcms-attachment-script',
+                            'dcmsAttach',
+                            [ 'ajaxurl'=>admin_url('admin-ajax.php'),
+                                'nonce' => wp_create_nonce('ajax-nonce-attachment')]);
+    }
+
+
 
 }
