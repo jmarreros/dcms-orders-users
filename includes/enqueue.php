@@ -18,6 +18,14 @@ class Enqueue{
                 DCMS_ORDERS_VERSION,
                 true);
 
+        // Orders
+        wp_register_script('dcms-attachment-script',
+                DCMS_ORDERS_URL.'assets/js/attachment.js',
+                ['vue.js', 'jquery'],
+                DCMS_ORDERS_VERSION,
+                true);
+
+
         wp_register_style('dcms-orders-style',
                 DCMS_ORDERS_URL.'assets/css/orders.css',
                 [],

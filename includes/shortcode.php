@@ -27,6 +27,9 @@ Class Shortcode{
         $current_url = Helper::get_current_url();
         $html_code = "";
 
+        // Enqueu general style
+        wp_enqueue_style('dcms-orders-style');
+
         switch (true) {
 
             case ($order_id == 0): // List orders
@@ -44,7 +47,6 @@ Class Shortcode{
 
                     switch ( $action ){
                         case '': // Specifict order
-                            wp_enqueue_style('dcms-orders-style');
                             ob_start();
                                 include_once DCMS_ORDERS_PATH.'views/templates/order-detail.php';
                                 $html_code = ob_get_contents();
@@ -52,7 +54,7 @@ Class Shortcode{
                             break;
 
                         case 'attach': // Attachments order
-                            wp_enqueue_style('dcms-orders-style');
+                            $this->enqueue_scripts_attachment();
                             ob_start();
                                 include_once DCMS_ORDERS_PATH.'views/templates/file-attachment.php';
                                 $html_code = ob_get_contents();
@@ -68,13 +70,22 @@ Class Shortcode{
 
     // Enqueue orders
     private function enqueue_scripts_orders(){
-        wp_enqueue_style('dcms-orders-style');
         wp_enqueue_script('dcms-orders-script');
 
         wp_localize_script('dcms-orders-script',
                             'dcmsOrders',
                             [ 'ajaxurl'=>admin_url('admin-ajax.php'),
                               'nonce' => wp_create_nonce('ajax-nonce-orders')]);
+    }
+
+    // Enqueue attachments
+    private function enqueue_scripts_attachment(){
+        wp_enqueue_script('dcms-attachment-script');
+
+        wp_localize_script('dcms-attachment-script',
+                            'dcmsAttach',
+                            [ 'ajaxurl'=>admin_url('admin-ajax.php'),
+                              'nonce' => wp_create_nonce('ajax-nonce-attachment')]);
     }
 
 }
