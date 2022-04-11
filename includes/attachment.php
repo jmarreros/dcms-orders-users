@@ -9,22 +9,31 @@ class Attachment{
 
     public function __construct(){
         add_action('wp_ajax_dcms_ajax_add_file',[ $this, 'dcms_add_file_order' ]);
+        add_action('wp_ajax_dcms_ajax_get_files',[ $this, 'dcms_get_uploaded_files' ]);
     }
 
+    // Upload file order and update metadata order
     public function dcms_add_file_order(){
         $res = [];
         Helper::validate_nonce('ajax-nonce-attachment');
 
+        // Get order
         $id_order = $_POST['id_order']??0;
+        $order = Helper::get_order_user($id_order);
 
-        $res = $this->upload_file();
+        if ( $order ){
+            $res = $this->_upload_file();
+
+            $file_url = content_url( DCMS_UPLOAD_FOLDER. $res['filename'] );
+            $this->_update_metadata( $order, $file_url );
+        }
 
         echo json_encode($res);
         wp_die();
     }
 
-
-    private function upload_file(){
+    // Process upload file with Ajax
+    private function _upload_file(){
 
         if( isset($_FILES['file']) ) {
 
@@ -52,7 +61,8 @@ class Attachment{
             if( move_uploaded_file( $tmp_name, $content_directory . $name_file ) ) {
                 return [
                     'status' => 1,
-                    'message' => "El archivo se agregó correctamente"
+                    'message' => "El archivo se agregó correctamente",
+                    'filename' => $name_file
                 ];
             }
 
@@ -65,51 +75,38 @@ class Attachment{
 
     }
 
+    // Save files url in the order metadata
+    private function _update_metadata( $order, $file_url ){
+        $values = $order->get_meta(DCMS_ORDERS_KEY_META);
+
+        if ( $values ) {
+            $values[] = $file_url;
+        } else {
+            $values = [$file_url];
+        }
+
+        $order->update_meta_data(DCMS_ORDERS_KEY_META, $values);
+        $order->save();
+    }
+
+    // Get upload files by order id
+    public function dcms_get_uploaded_files(){
+        $res = ['status' => 0,
+                'message' => 'No se pudo recuperar los datos' ];
+
+        // Get order
+        $id_order = $_POST['id_order']??0;
+        $order = wc_get_order( $id_order );
+
+        if ( $order ) {
+            $data = $order->get_meta(DCMS_ORDERS_KEY_META);
+            $res =  [
+                'status' => 1,
+                'data' => $data
+                ];
+        }
+
+        echo json_encode($res);
+        wp_die();
+    }
 }
-
-
-
-
-
-
-
-
-// <form action="< admin_url( 'admin-post.php' ) >" enctype="multipart/form-data" method="post">
-// Selecciona algún archivo: <input name="upload-file" type="file" /> <hr>
-// <input type="hidden" name="action" value="handle_attachment">
-// <input type="hidden" name="data" value="xxx">
-// <input type="submit" value="Enviar archivo" />
-// </form>
-
-    // add_action('admin_post_handle_attachment', [$this, 'handle_attachment']);
-
-    // public function handle_attachment(){
-
-    //     $data = $_POST['data'];
-    //     if(isset($_FILES['upload-file'])) {
-    //         global $wp_filesystem;
-    //         WP_Filesystem();
-
-    //         $name_file = $_FILES['upload-file']['name'];
-    //         $tmp_name = $_FILES['upload-file']['tmp_name'];
-    //         $allow_extensions = ['png','pdf'];
-
-    //         // File type validation
-    //         $path_parts = pathinfo($name_file);
-    //         $ext = $path_parts['extension'];
-
-    //         if ( ! in_array($ext, $allow_extensions) ) {
-    //             echo "Error - File type not allowed";
-    //             return;
-    //         }
-
-    //         $content_directory = $wp_filesystem->wp_content_dir() . 'uploads/archivos-subidos/';
-    //         $wp_filesystem->mkdir( $content_directory );
-
-    //         if( move_uploaded_file( $tmp_name, $content_directory . $name_file ) ) {
-    //             echo "File was successfully uploaded";
-    //         } else {
-    //             echo "The file was not uploaded";
-    //         }
-    //     }
-    // }

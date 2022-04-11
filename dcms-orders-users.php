@@ -37,6 +37,7 @@ final class Loader{
 		define ('DCMS_ORDERS_URL', plugin_dir_url( __FILE__ ));
 		define ('DCMS_ORDERS_BASE_NAME', plugin_basename( __FILE__ ));
 		define ('DCMS_ORDERS_SUBMENU', 'options-general.php');
+		define ('DCMS_ORDERS_KEY_META', '_uploaded_files');
 		define ('DCMS_UPLOAD_FOLDER', 'uploads/archivos-subidos/'); // inside wp-content folder
 	}
 

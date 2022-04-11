@@ -2,18 +2,33 @@
 defined( 'ABSPATH' ) || exit;
 
 ?>
-<section class="attachment-container">
+<section id="attachment-container" class="attachment-container">
+
     <section class="uploaded-files">
         <h4>Archivos para la orden <mark><?= $order_id ?></mark>:</h4>
 
+        <div class="no-items" v-if="!loadingFiles && results.length==0">
+            No hay aún ningún archivo adjunto
+        </div>
+        <ul v-if="!loadingFiles">
+            <li v-for="item in results">
+                <a :href="item" target="_blank">
+                    <i class="fa fa-file"></i> {{ item.substring(item.lastIndexOf('/')+1) }}
+                </a>
+            </li>
+        </ul>
+
+        <section v-if="loadingFiles" class="loading-container">
+            <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+        </section>
 
     </section>
 
-    <section class="form-container">
+    <section class="form-container" v-show="(uploadingFile === null && ! loadingFiles) || uploadingFile !== null">
 
         <h4>Subir archivo para la orden <?= $order_id ?>:</h4>
 
-        <form action="" enctype="multipart/form-data" method="post" id="attach-form">
+        <form action="" enctype="multipart/form-data" method="post" id="attach-form" v-on:submit.prevent="onSubmit">
             <div>
                 <span>Selecciona algún archivo: </span>
                 <input type="file" id="file" name="upload-file"/>
@@ -22,7 +37,12 @@ defined( 'ABSPATH' ) || exit;
             <input type="submit" id="submit" value="Enviar archivo" />
         </form>
 
-        <div id="message"></div>
+        <div id="message" v-if="!uploadingFile">{{ message }}</div>
+
+        <section v-if="uploadingFile" class="loading-container">
+            <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+        </section>
+
     </section>
 </section>
 
