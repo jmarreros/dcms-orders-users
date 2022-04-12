@@ -42,11 +42,6 @@ var vmattach = new Vue({
 			const files = j('#file')[0].files
 			const id_order = j('#order').val()
 
-			this.uploadingFile = true
-			this.message = ''
-			j('#file').prop('disabled', true)
-			j('#submit').prop('disabled', true)
-
 			if (files.length <= 0 ) {
 				alert('Tienes que seleccionar algún archivo')
 				return
@@ -57,6 +52,11 @@ var vmattach = new Vue({
 				alert(`Tu archivo pesa ${size}MB. No puedes subir archivos mayores a 2MB`)
 				return;
 			}
+
+			this.uploadingFile = true
+			this.message = ''
+			j('#file').prop('disabled', true)
+			j('#submit').prop('disabled', true)
 
 			fd.append('file',files[0])
 			fd.append('action', 'dcms_ajax_add_file')
@@ -78,7 +78,10 @@ var vmattach = new Vue({
 					j('#file').prop('disabled', false).val('')
 					j('#submit').prop('disabled', false)
 
-					vmattach.loadListFiles()
+					if ( vmattach.status == 1 ){
+						vmattach.loadListFiles()
+					}
+
 				}
 			});
 		}

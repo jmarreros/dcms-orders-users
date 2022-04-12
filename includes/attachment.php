@@ -24,8 +24,11 @@ class Attachment{
         if ( $order ){
             $res = $this->_upload_file();
 
-            $file_url = content_url( DCMS_UPLOAD_FOLDER. $res['filename'] );
-            $this->_update_metadata( $order, $file_url );
+            if ( isset($res['filename']) ){
+                $file_url = content_url( DCMS_UPLOAD_FOLDER. $res['filename'] );
+                $this->_update_metadata( $order, $file_url );
+            }
+
         }
 
         echo json_encode($res);
@@ -42,21 +45,15 @@ class Attachment{
 
             $name_file = $_FILES['file']['name'];
             $tmp_name = $_FILES['file']['tmp_name'];
-            $allow_extensions = ['png','pdf'];
 
-            // File type validation
-            $path_parts = pathinfo($name_file);
-            $ext = $path_parts['extension'];
+            // Validate extension
+            $this->_validate_extension_file($name_file);
 
-            if ( ! in_array($ext, $allow_extensions) ) {
-                return [
-                    'status' => 0,
-                    'message' => "Extensión de archivo no permitida"
-                ];
-            }
-
+            // Move file
             $content_directory = $wp_filesystem->wp_content_dir() . DCMS_UPLOAD_FOLDER;
             $wp_filesystem->mkdir( $content_directory );
+
+            $name_file = $this->_rename_file($name_file);
 
             if( move_uploaded_file( $tmp_name, $content_directory . $name_file ) ) {
                 return [
@@ -87,6 +84,34 @@ class Attachment{
 
         $order->update_meta_data(DCMS_ORDERS_KEY_META, $values);
         $order->save();
+    }
+
+
+    // Rename file with unix time
+    private function _rename_file( $name_file ){
+        $path_parts = pathinfo($name_file);
+
+        $name = $path_parts['filename'];
+        $ext = $path_parts['extension'];
+        $name = $name.'_'.time();
+
+        return $name.'.'.$ext;
+    }
+
+    // Validate the extension file
+    private function _validate_extension_file( $name_file ){
+        $allow_extensions = ['png','pdf'];
+
+        // File type validation
+        $path_parts = pathinfo($name_file);
+        $ext = $path_parts['extension'];
+
+        if ( ! in_array($ext, $allow_extensions) ) {
+            return [
+                'status' => 0,
+                'message' => "Extensión de archivo no permitida"
+            ];
+        }
     }
 
     // Get upload files by order id

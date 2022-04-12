@@ -5,12 +5,19 @@ defined( 'ABSPATH' ) || exit;
 <section id="attachment-container" class="attachment-container">
 
     <section class="uploaded-files">
-        <h4>Archivos para la orden <mark><?= $order_id ?></mark>:</h4>
+        <section class="order-resume">
+            <div>
+                <h4>Archivos para la orden <mark><?= $order_id ?></mark>:</h4>
+            </div>
+            <div>
+                <a href="<?= $current_url ?>"><i class="fa fa-arrow-alt-circle-left"></i> Regresar</a>
+            </div>
+        </section>
 
         <div class="no-items" v-if="!loadingFiles && results.length==0">
             No hay aún ningún archivo adjunto
         </div>
-        <ul v-if="!loadingFiles">
+        <ul v-if="!loadingFiles && results.length">
             <li v-for="item in results">
                 <a :href="item" target="_blank">
                     <i class="fa fa-file"></i> {{ item.substring(item.lastIndexOf('/')+1) }}
@@ -34,10 +41,10 @@ defined( 'ABSPATH' ) || exit;
                 <input type="file" id="file" name="upload-file"/>
             </div>
             <input type="hidden" id="order" name="order" value="<?= $order_id ?>">
-            <input type="submit" id="submit" value="Enviar archivo" />
+            <input type="submit" id="submit" value="Enviar archivo" class="button" />
         </form>
 
-        <div id="message" v-if="!uploadingFile">{{ message }}</div>
+        <div id="message" v-if="!uploadingFile && message.length">{{ message }}</div>
 
         <section v-if="uploadingFile" class="loading-container">
             <div class="lds-ring"><div></div><div></div><div></div><div></div></div>

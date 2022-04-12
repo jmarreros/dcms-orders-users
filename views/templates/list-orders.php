@@ -27,9 +27,9 @@ defined( 'ABSPATH' ) || exit;
             <td v-html="item.total"></td>
             <td>
                 <section class="container-actions" :class="loading && 'disabled'">
-                    <a :href="'<?= $current_url ?>?order=' + item.id" >Ver</a>
-                    <a href="#">Adjuntar</a>
-                    <a v-if="item.payment_url" :href="item.payment_url">Pagar</a>
+                    <a :href="'<?= $current_url ?>?order=' + item.id" class="button" >Ver</a>
+                    <a :href="'<?= $current_url ?>?order=' + item.id + '&action=attach'" class="button">Adjuntar</a>
+                    <a v-if="item.payment_url" :href="item.payment_url" class="button">Pagar</a>
                 </section>
             </td>
         </tr>

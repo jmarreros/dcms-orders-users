@@ -28,6 +28,72 @@
     margin:20px 0;
 }
 
+#orders-user .container-actions .button{
+  margin: 4px;
+  padding: 2px;
+  font-size: 10px;
+  font-weight: 500;
+  min-width: 100px;
+}
+
+#attachment-container .uploaded-files .order-resume {
+  display: flex;
+  justify-content: space-between;
+}
+
+#attachment-container .no-items{
+  background-color: #f0f0f0;
+  padding:16px;
+  margin-top: 0;
+}
+
+#attachment-container #message{
+  border:1px solid black;
+  padding:14px;
+}
+
+#attach-form,
+#attachment-container ul{
+  background-color:#f0f0f0;
+  padding:24px 26px;
+  color:black;
+}
+
+#attachment-container .uploaded-files{
+  margin-bottom: 30px;
+}
+
+#attach-form{
+  margin-bottom: 15px;
+}
+
+
+#attachment-container ul li{
+  margin:0;
+}
+
+#attach-form > div{
+  display: flex;
+  margin: 15px 0;
+}
+
+#attach-form > div span{
+  display: inline-block;
+  margin-right: 10px;
+}
+
+
+
+@media(max-width:780px){
+  #attach-form > div{
+    display: block;
+  }
+  #attach-form > div span{
+    display: block;
+    margin-bottom: 10px;
+  }
+}
+
 
 .lds-ring {
     display: inline-block;
