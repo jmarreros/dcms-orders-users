@@ -10,6 +10,7 @@ class Attachment{
     public function __construct(){
         add_action('wp_ajax_dcms_ajax_add_file',[ $this, 'dcms_add_file_order' ]);
         add_action('wp_ajax_dcms_ajax_get_files',[ $this, 'dcms_get_uploaded_files' ]);
+        add_action('add_meta_boxes', [ $this, 'dcms_show_list_attachments']);
     }
 
     // Upload file order and update metadata order
@@ -134,4 +135,30 @@ class Attachment{
         echo json_encode($res);
         wp_die();
     }
+
+
+    // Show list attachments in order details
+    public function dcms_show_list_attachments(){
+        add_meta_box( 'dcms_attachments', 'Adjuntos orden', [$this, 'dcms_content_metabox'], 'shop_order', 'normal', 'high' );
+    }
+
+    public function dcms_content_metabox(){
+        $id_order = get_the_ID();
+        $order = wc_get_order( $id_order );
+
+        if ( $order ) {
+            $data = $order->get_meta(DCMS_ORDERS_KEY_META);
+
+            if ( $data ){
+                echo "<ul class='dcms-attachments'>";
+                foreach($data as $item){
+                    $name = basename($item);
+                    echo "<li><a href='$item' target='_blank'>$name</a></li>";
+                }
+                echo "</ul>";
+            }
+        }
+
+    }
+
 }

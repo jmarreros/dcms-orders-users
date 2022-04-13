@@ -19,7 +19,7 @@ class Orders{
 
         $args = [ 'customer_id' => $id_user,
                   'paginate' => true,
-                  'limit' => 2,
+                //   'limit' => 2,
                   'paged' => $page
                 ];
 
