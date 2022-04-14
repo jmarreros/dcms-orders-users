@@ -1,5 +1,4 @@
 var j = jQuery.noConflict();
-
 var vmattach = new Vue({
     el: '#attachment-container',
     data: {
@@ -87,3 +86,9 @@ var vmattach = new Vue({
 		}
     }
 })
+
+
+// Aux functions
+getFileName = function(item){
+	return item.substring(item.lastIndexOf('/')+1)
+}

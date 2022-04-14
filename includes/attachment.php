@@ -48,7 +48,8 @@ class Attachment{
             $tmp_name = $_FILES['file']['tmp_name'];
 
             // Validate extension
-            $this->_validate_extension_file($name_file);
+            $res = $this->_validate_extension_file($name_file);
+            if (isset($res['status']) && $res['status'] == 0) return $res;
 
             // Move file
             $content_directory = $wp_filesystem->wp_content_dir() . DCMS_UPLOAD_FOLDER;
@@ -101,11 +102,13 @@ class Attachment{
 
     // Validate the extension file
     private function _validate_extension_file( $name_file ){
-        $allow_extensions = ['png','pdf'];
+        $allow_extensions = ['png','jpg','jpeg','webp','pdf'];
 
         // File type validation
         $path_parts = pathinfo($name_file);
         $ext = $path_parts['extension'];
+
+        error_log(print_r($path_parts,true));
 
         if ( ! in_array($ext, $allow_extensions) ) {
             return [

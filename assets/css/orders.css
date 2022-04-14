@@ -47,10 +47,6 @@
   margin-top: 0;
 }
 
-#attachment-container #message{
-  border:1px solid black;
-  padding:14px;
-}
 
 #attach-form,
 #attachment-container ul{
@@ -67,9 +63,41 @@
   margin-bottom: 15px;
 }
 
-
 #attachment-container ul li{
   margin:0;
+}
+
+#attachment-container #message{
+  color:white;
+  padding:14px;
+}
+
+#attachment-container #message.error{
+  background-color:darkred;
+}
+
+#attachment-container #message.success{
+  background-color:green;
+}
+
+.uploaded-files .fa-minus-circle{
+  color:darkred;
+}
+
+.uploaded-files ul{
+  list-style: none;
+}
+
+.uploaded-files ul li{
+  display: flex;
+  justify-content:space-around;
+}
+.uploaded-files ul li div{
+  width: 90%;
+}
+
+.uploaded-files ul li{
+  margin-left: -10px!important;
 }
 
 #attach-form > div{

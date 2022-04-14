@@ -19,8 +19,13 @@ defined( 'ABSPATH' ) || exit;
         </div>
         <ul v-if="!loadingFiles && results.length">
             <li v-for="item in results">
-                <a :href="item" target="_blank">
-                    <i class="fa fa-file"></i> {{ item.substring(item.lastIndexOf('/')+1) }}
+                <div>
+                    <a :href="item" target="_blank">
+                        <i class="fa fa-file"></i> {{ getFileName(item) }}
+                    </a>
+                </div>
+                <a href="#" title="Eliminar" class="remove" :data-file="getFileName(item)">
+                    <i class="fa fa-minus-circle" ></i>
                 </a>
             </li>
         </ul>
@@ -44,7 +49,7 @@ defined( 'ABSPATH' ) || exit;
             <input type="submit" id="submit" value="Enviar archivo" class="button" />
         </form>
 
-        <div id="message" v-if="!uploadingFile && message.length">{{ message }}</div>
+        <div id="message" v-bind:class="status?'success':'error'" v-if="!uploadingFile && message.length">{{ message }}</div>
 
         <section v-if="uploadingFile" class="loading-container">
             <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
