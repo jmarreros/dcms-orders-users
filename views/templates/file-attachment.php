@@ -24,7 +24,7 @@ defined( 'ABSPATH' ) || exit;
                         <i class="fa fa-file"></i> {{ getFileName(item) }}
                     </a>
                 </div>
-                <a href="#" title="Eliminar" class="remove" :data-file="getFileName(item)">
+                <a href="#" v-on:click="removeFile" title="Eliminar" :data-file="getFileName(item)">
                     <i class="fa fa-minus-circle" ></i>
                 </a>
             </li>

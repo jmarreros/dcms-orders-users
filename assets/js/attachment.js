@@ -83,7 +83,30 @@ var vmattach = new Vue({
 
 				}
 			});
+		},
+		removeFile(e){
+			e.preventDefault()
+
+			const filename = j(e.target).data('file')
+			if ( ! confirm('¿Quieres eliminar el archivo?' + filename) ) return
+
+			j(e.target).parent().addClass('removing')
+
+			j.ajax({
+				url: dcmsAttach.ajaxurl,
+				type: 'post',
+				dataType: 'json',
+				data: {
+					action : 'dcms_ajax_remove_file',
+                    nonce : dcmsAttach.nonce,
+					filename:'nombre.txt'
+				},
+				success: function(res){
+					console.log(res)
+				}
+			});
 		}
+
     }
 })
 

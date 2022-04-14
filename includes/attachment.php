@@ -10,6 +10,7 @@ class Attachment{
     public function __construct(){
         add_action('wp_ajax_dcms_ajax_add_file',[ $this, 'dcms_add_file_order' ]);
         add_action('wp_ajax_dcms_ajax_get_files',[ $this, 'dcms_get_uploaded_files' ]);
+        add_action('wp_ajax_dcms_ajax_remove_file', [ $this, 'dcms_remove_file']);
         add_action('add_meta_boxes', [ $this, 'dcms_show_list_attachments']);
     }
 
@@ -145,6 +146,7 @@ class Attachment{
         add_meta_box( 'dcms_attachments', 'Adjuntos orden', [$this, 'dcms_content_metabox'], 'shop_order', 'normal', 'high' );
     }
 
+    // metabox content
     public function dcms_content_metabox(){
         $id_order = get_the_ID();
         $order = wc_get_order( $id_order );
@@ -162,6 +164,22 @@ class Attachment{
             }
         }
 
+    }
+
+    // Remove files front-end user
+    public function dcms_remove_file(){
+        $filename = $_POST['filename'];
+
+        Helper::validate_nonce('ajax-nonce-attachment');
+
+
+        $res =  [
+            'status' => 1,
+            'message' => "Borrar $filename 😃"
+        ];
+
+        echo json_encode($res);
+        wp_die();
     }
 
 }
