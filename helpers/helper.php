@@ -34,4 +34,15 @@ class Helper{
         return $order;
     }
 
+
+    // Return wp_cpontente folder absolute path
+    public static function path_content_folder($create_folder = false){
+        global $wp_filesystem;
+        WP_Filesystem();
+
+        $content_folder = $wp_filesystem->wp_content_dir() . DCMS_UPLOAD_FOLDER;
+        if ( $create_folder ) $wp_filesystem->mkdir( $content_folder );
+
+        return $content_folder;
+    }
 }

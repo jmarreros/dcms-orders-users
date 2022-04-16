@@ -42,9 +42,6 @@ class Attachment{
 
         if( isset($_FILES['file']) ) {
 
-            global $wp_filesystem;
-            WP_Filesystem();
-
             $name_file = $_FILES['file']['name'];
             $tmp_name = $_FILES['file']['tmp_name'];
 
@@ -53,9 +50,7 @@ class Attachment{
             if (isset($res['status']) && $res['status'] == 0) return $res;
 
             // Move file
-            $content_directory = $wp_filesystem->wp_content_dir() . DCMS_UPLOAD_FOLDER;
-            $wp_filesystem->mkdir( $content_directory );
-
+            $content_directory = Helper::path_content_folder(true);
             $name_file = $this->_rename_file($name_file);
 
             if( move_uploaded_file( $tmp_name, $content_directory . $name_file ) ) {
@@ -89,6 +84,27 @@ class Attachment{
         $order->save();
     }
 
+    // Remove order metadata filename
+    private function _remove_metadata($id_order, $filename){
+        $order = Helper::get_order_user($id_order);
+
+        if ( $order ){
+            $values = $order->get_meta(DCMS_ORDERS_KEY_META);
+            if ( $values ){
+                foreach ($values as $key => $value) {
+                    if ( $filename === basename($value) ){
+                        unset($values[$key]);
+
+                        $values = array_values($values);
+                        $order->update_meta_data(DCMS_ORDERS_KEY_META, $values);
+                        $order->save();
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 
     // Rename file with unix time
     private function _rename_file( $name_file ){
@@ -109,8 +125,6 @@ class Attachment{
         $path_parts = pathinfo($name_file);
         $ext = $path_parts['extension'];
 
-        error_log(print_r($path_parts,true));
-
         if ( ! in_array($ext, $allow_extensions) ) {
             return [
                 'status' => 0,
@@ -130,6 +144,7 @@ class Attachment{
 
         if ( $order ) {
             $data = $order->get_meta(DCMS_ORDERS_KEY_META);
+
             $res =  [
                 'status' => 1,
                 'data' => $data
@@ -168,15 +183,26 @@ class Attachment{
 
     // Remove files front-end user
     public function dcms_remove_file(){
-        $filename = $_POST['filename'];
-
         Helper::validate_nonce('ajax-nonce-attachment');
 
+        $filename = $_POST['filename'];
+        $id_order = $_POST['id_order']??0;
 
         $res =  [
-            'status' => 1,
-            'message' => "Borrar $filename 😃"
+            'status' => 0,
+            'message' => "Hubo un error al borrar el archivo $filename"
         ];
+
+        if ( $this->_remove_metadata($id_order, $filename) ){
+            $path_file = Helper::path_content_folder().$filename;
+
+            if ( unlink($path_file) ){
+                $res =  [
+                    'status' => 1,
+                    'message' => "Archivo $filename eliminado"
+                ];
+            }
+        }
 
         echo json_encode($res);
         wp_die();

@@ -25,6 +25,7 @@ var vmattach = new Vue({
                     nonce : dcmsAttach.nonce,
                 },
                 success:function(res){
+
                     if ( res.status == 0 ) {
                         console.log(res)
                         return
@@ -87,7 +88,9 @@ var vmattach = new Vue({
 		removeFile(e){
 			e.preventDefault()
 
-			const filename = j(e.target).data('file')
+			const id_order = j('#order').val()
+			const filename = j(e.target).parent().data('file')
+
 			if ( ! confirm('¿Quieres eliminar el archivo?' + filename) ) return
 
 			j(e.target).parent().addClass('removing')
@@ -99,10 +102,15 @@ var vmattach = new Vue({
 				data: {
 					action : 'dcms_ajax_remove_file',
                     nonce : dcmsAttach.nonce,
-					filename:'nombre.txt'
+					filename,
+					id_order
 				},
 				success: function(res){
-					console.log(res)
+					if (res.status == 1){
+						vmattach.loadListFiles()
+					} else {
+						alert(res.message)
+					}
 				}
 			});
 		}
