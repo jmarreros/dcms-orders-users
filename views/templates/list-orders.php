@@ -10,30 +10,33 @@ defined( 'ABSPATH' ) || exit;
 ?>
 <div id="orders-user">
 
-    <table id="list-orders">
-        <tr>
-            <th>Pedido</th>
-            <th>Fecha</th>
-            <th>Estado</th>
-            <th>Depósito</th>
-            <th>Total</th>
-            <th>Acciones</th>
-        </tr>
-        <tr v-for="item in results" :key="item.id">
-            <td>{{ item.id }}</td>
-            <td>{{ item.date }}</td>
-            <td>{{ item.status }}</td>
-            <td>{{ item.deposit ? 'Si' : 'No' }}</td>
-            <td v-html="item.total"></td>
-            <td>
-                <section class="container-actions" :class="loading && 'disabled'">
-                    <a :href="'<?= $current_url ?>?order=' + item.id" class="button" >Ver</a>
-                    <a :href="'<?= $current_url ?>?order=' + item.id + '&action=attach'" class="button">Adjuntar</a>
-                    <a v-if="item.payment_url" :href="item.payment_url" class="button">Pagar</a>
-                </section>
-            </td>
-        </tr>
-    </table>
+    <div style="overflow-x: auto;">
+        <table id="list-orders">
+            <tr>
+                <th>Pedido</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th>Depósito</th>
+                <th>Total</th>
+                <th>Acciones</th>
+            </tr>
+            <tr v-for="item in results" :key="item.id">
+                <td>{{ item.id }}</td>
+                <td>{{ item.date }}</td>
+                <td>{{ item.status }}</td>
+                <td>{{ item.deposit ? 'Si' : 'No' }}</td>
+                <td v-html="item.total"></td>
+                <td>
+                    <section class="container-actions" :class="loading && 'disabled'">
+                        <a :href="'<?= $current_url ?>?order=' + item.id" class="button" >Ver</a>
+                        <a :href="'<?= $current_url ?>?order=' + item.id + '&action=attach'" class="button">Adjuntar</a>
+                        <a v-if="item.payment_url" :href="item.payment_url" class="button">Pagar</a>
+                    </section>
+                </td>
+            </tr>
+        </table>
+    </div>
+
     <div v-if="!results.length && !loading" class="no-items">No tienes aún ninguna orden</div>
 
     <section class="footer-container">
