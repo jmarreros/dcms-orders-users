@@ -34,4 +34,29 @@ class Database{
         return $this->wpdb->get_row($sql, ARRAY_A);
     }
 
+    // Get total pending payment partial deposits
+    public function get_total_payment_pending($order_id){
+        $amount_pending = 0;
+        $args = [
+            'type' => 'wcdp_payment',
+            'parent' => $order_id,
+            'status' => 'pending' //Added status filter
+        ];
+
+        $orders = wc_get_orders( $args );
+
+        if ( $orders ) {
+            foreach ($orders as $order) {
+                $total = $order->get_total();
+                $amount_pending += $total;
+            }
+        }
+
+        return $amount_pending;
+    }
 }
+
+
+// $status = $order->get_status();
+//if ( $status == 'pending' ) { //|| $status == 'on-hold'
+//}

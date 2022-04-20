@@ -17,6 +17,7 @@ defined( 'ABSPATH' ) || exit;
                 <th>Fecha</th>
                 <th>Estado</th>
                 <th>Depósito</th>
+                <th>Pendiente</th>
                 <th>Total</th>
                 <th>Acciones</th>
             </tr>
@@ -25,6 +26,7 @@ defined( 'ABSPATH' ) || exit;
                 <td>{{ item.date }}</td>
                 <td>{{ item.status }}</td>
                 <td>{{ item.deposit ? 'Si' : 'No' }}</td>
+                <td v-html="item.pending"></td>
                 <td v-html="item.total"></td>
                 <td>
                     <section class="container-actions" :class="loading && 'disabled'">

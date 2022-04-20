@@ -39,6 +39,11 @@ class Orders{
         $db = new Database();
         $items = $this->get_object_orders($page);
 
+        // Temp
+        $db->get_total_payment_pending(21197);
+
+
+
         $data = [];
         foreach ($items->orders as $key => $item) {
             $order_id = $item->get_id();
@@ -48,6 +53,7 @@ class Orders{
             $data[$key]['date'] = wc_format_datetime( $item->get_date_created() );
             $data[$key]['total'] = wc_price($item->get_total());
             $data[$key]['deposit'] = $db->order_has_deposits($order_id);
+            $data[$key]['pending'] = wc_price($db->get_total_payment_pending($order_id));
             $data[$key]['payment_url'] = '';
 
             // Conditional for showing payment link
