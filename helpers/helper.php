@@ -45,4 +45,5 @@ class Helper{
 
         return $content_folder;
     }
+
 }

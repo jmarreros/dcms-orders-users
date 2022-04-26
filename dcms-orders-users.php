@@ -51,6 +51,8 @@ final class Loader{
 		include_once ( DCMS_ORDERS_PATH . '/includes/database.php');
 		include_once ( DCMS_ORDERS_PATH . '/includes/enqueue.php');
 		include_once ( DCMS_ORDERS_PATH . '/includes/attachment.php');
+		include_once ( DCMS_ORDERS_PATH . '/backend/reports/database.php');
+		include_once ( DCMS_ORDERS_PATH . '/backend/reports/process.php');
 	}
 
 	// Load tex domain

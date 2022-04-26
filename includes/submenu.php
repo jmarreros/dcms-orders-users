@@ -2,6 +2,8 @@
 
 namespace dcms\orders\includes;
 
+use dcms\orders\reports\Process;
+
 /**
  * Class for creating a dashboard submenu
  */
@@ -25,6 +27,9 @@ class Submenu{
 
     // Callback, show view
     public function submenu_page_callback(){
-        include_once (DCMS_ORDERS_PATH. '/views/main-screen.php');
+        $process = new Process;
+        $process->get_resume_courses();
+
+        include_once (DCMS_ORDERS_PATH. '/views/backend/main-screen.php');
     }
 }
