@@ -119,6 +119,10 @@
 }
 
 
+#my-orders .woocommerce-table--order-details tfoot tr:first-child{
+  display: none;
+}
+
 
 @media(max-width:780px){
   #attach-form > div{
