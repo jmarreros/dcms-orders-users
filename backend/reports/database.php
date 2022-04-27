@@ -4,16 +4,12 @@ namespace dcms\orders\reports;
 
 
 class Database{
-
     private $wpdb;
-
 
     public function __construct(){
         global $wpdb;
         $this->wpdb = $wpdb;
     }
-
-
 
     // Main query, gets all courses with relevant info
     // Courses have two associate produts, id_product and url_product2
@@ -44,7 +40,7 @@ class Database{
         INNER JOIN (
             SELECT pm.post_id, GROUP_CONCAT(pm.meta_value) AS prices
             FROM {$this->wpdb->prefix}postmeta pm
-            INNER JOIN wp_posts p ON p.ID = pm.post_id
+            INNER JOIN {$this->wpdb->prefix}posts p ON p.ID = pm.post_id
             WHERE p.post_type = 'stm-courses'
             AND p.post_status = 'publish'
             AND pm.meta_key IN ( 'price', 'sale_price' )
@@ -56,26 +52,9 @@ class Database{
         return $this->wpdb->get_results($sql, ARRAY_A);
     }
 
-    // Auxiliar function for getting id product form url, por product2
-    public function get_product_id_from_url($product_url){
-        preg_match('/producto\/(.+)\//', $product_url, $matches);
-        $product_slug = $matches[1]??'';
-
-        if ( $product_slug ){
-
-            $sql = "SELECT ID
-                    FROM {$this->wpdb->prefix}posts
-                    WHERE post_name = '{$product_slug}'
-                    AND post_type = 'product'";
-
-            return $this->wpdb->get_var($sql)??0;
-        }
-        return 0;
-    }
-
-
-    public function get_orders_by_id_product($ids_product){
+    public function get_items_orders_by_ids_product($ids_product){
         $str_ids = implode(',', $ids_product);
+
         $sql ="SELECT
                 oi.order_id,
                 p.post_status,
@@ -94,7 +73,7 @@ class Database{
                     FROM {$this->wpdb->prefix}woocommerce_order_itemmeta
                     WHERE meta_key = '_line_total'
                 ) oimt ON oimt.order_item_id = oi.order_item_id
-                INNER JOIN wp_posts p ON p.ID = oi.order_id
+                INNER JOIN {$this->wpdb->prefix}posts p ON p.ID = oi.order_id
                 WHERE
                 p.post_status IN ('wc-completed','wc-on-hold','wc-partially-paid','wc-processing')
                 AND oi.order_item_type = 'line_item'
@@ -103,5 +82,33 @@ class Database{
 
         return $this->wpdb->get_results($sql, ARRAY_A);
     }
+
+
+    public function count_sub_orders_completed($parent_order_id){
+        $sql = "SELECT COUNT(ID)
+                FROM {$this->wpdb->prefix}posts
+                WHERE
+                post_parent = {$parent_order_id}
+                AND post_status IN ('wc-completed', 'wc-on-hold')";
+
+        return $this->wpdb->get_var($sql)??0;
+    }
+
+        // Auxiliar function for getting id product form url, por product2
+        public function get_product_id_from_url($product_url){
+            preg_match('/producto\/(.+)\//', $product_url, $matches);
+            $product_slug = $matches[1]??'';
+
+            if ( $product_slug ){
+
+                $sql = "SELECT ID
+                        FROM {$this->wpdb->prefix}posts
+                        WHERE post_name = '{$product_slug}'
+                        AND post_type = 'product'";
+
+                return $this->wpdb->get_var($sql)??0;
+            }
+            return 0;
+        }
 
 }

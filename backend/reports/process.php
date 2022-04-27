@@ -5,49 +5,58 @@ namespace dcms\orders\reports;
 use dcms\orders\reports\Database;
 
 class Process{
+
     public function get_resume_courses(){
         $db = new Database;
-        // $courses = $db->get_courses();
+        $courses = $db->get_courses();
 
-        // foreach ($courses as $key => $course) {
-        //     $courses[$key]['id_product2'] = $db->get_product_id_from_url($course['url_product2']);
-        // }
+        foreach ($courses as $key => $course) {
 
-        // error_log(print_r($courses,true));
+            // Add column id_product2
+            $id_product2 = $db->get_product_id_from_url($course['url_product2']); // Add second product ID
+            $courses[$key]['id_product2'] = $id_product2;
 
-        // $id = $db->get_product_id_from_url('http://caesacademy4.local/producto/diplomado-gerencia-de-gestion-humana-5/');
-        // error_log(print_r($id,true));
+            // Build id_products
+            $id_products[0] = $courses[$key]['id_product'];
+            if ( $id_product2 > 0 ) $id_products[1] = $id_product2;
 
-        $orders = $db->get_orders_by_id_product([20069, 6719]);
+            $items_orders = $db->get_items_orders_by_ids_product( $id_products );
 
+            // Accumulate totals
+            $total_course = 0;
+            $total_paid = 0;
 
-        foreach ($orders as $key => $order) {
+            foreach ($items_orders as $item_order) {
 
-            if ( $this->has_deposit($order['deposit_info']) ){
-                // error_log(print_r("Si tiene depósito",true));
+                $total_course += $item_order['item_total'];
+                $has_deposits = $this->_has_deposit( $item_order['deposit_info']);
 
-                $result = $this->get_paid_deposit_amount($order['deposit_info'], 3);
+                // Order is completed o waiting total paid
+                if ( $item_order['post_status'] === 'wc-completed' ||
+                    ( $item_order['post_status'] === 'wc-on-hold' && ! $has_deposits ) ){
 
-                error_log(print_r($result,true));
+                    $total_paid += $item_order['item_total'];
 
-            } else {
-                error_log(print_r("No tiene depósito",true));
+                } else if ( $has_deposits ) { // Order uncompleted paid
+
+                    $count_payments = $db->count_sub_orders_completed($item_order['order_id']);
+                    $amount_item = $this->_get_paid_deposit_amount($item_order['deposit_info'], $count_payments);
+
+                    $total_paid += $amount_item;
+                }
             }
 
-            // La orden ya esta pagada totalmente
-            // if ( $order['post_status'] == 'wc-completed'){
-
-            // } else { // La orden aún no esta pagada completamente o esta en espera
-
-            // }
-
+            // Add to array courses
+            $courses[$key]['total_course'] = $total_course;
+            $courses[$key]['total_paid'] = $total_paid;
         }
 
-        error_log(print_r($orders,true));
+        error_log(print_r( $courses, true ));
     }
 
 
-    private function has_deposit($deposit_info){
+    // Verify if the order has deposit enabled
+    private function _has_deposit($deposit_info){
         if ( empty($deposit_info) ) return false;
 
         $data = maybe_unserialize($deposit_info);
@@ -57,8 +66,8 @@ class Process{
     }
 
 
-    // Get total payment by item in partial payment by deposit
-    private function get_paid_deposit_amount($deposit_info, $count_payments){
+    // Get total payment by item given count_payments var
+    private function _get_paid_deposit_amount($deposit_info, $count_payments){
         $data = maybe_unserialize($deposit_info);
         $paid = 0;
 
@@ -83,3 +92,7 @@ class Process{
 
 
 }
+
+
+
+// error_log(print_r($count_payments.' - '.$result . ' - Order: '. $order['order_id'],true));
