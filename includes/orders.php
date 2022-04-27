@@ -19,7 +19,6 @@ class Orders{
 
         $args = [ 'customer_id' => $id_user,
                   'paginate' => true,
-                //   'limit' => 2,
                   'paged' => $page
                 ];
 
@@ -38,11 +37,6 @@ class Orders{
 
         $db = new Database();
         $items = $this->get_object_orders($page);
-
-        // Temp
-        $db->get_total_payment_pending(21197);
-
-
 
         $data = [];
         foreach ($items->orders as $key => $item) {

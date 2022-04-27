@@ -3,10 +3,32 @@
 namespace dcms\orders\reports;
 
 use dcms\orders\reports\Database;
+use dcms\orders\helpers\Helper;
 
 class Process{
 
+    public function __construct(){
+        add_action('wp_ajax_dcms_ajax_courses_report',[ $this, 'dcms_courses_report' ]);
+    }
+
+    // Ajax callback
+    public function dcms_courses_report(){
+        Helper::validate_nonce('ajax-nonce-report');
+
+        $res = [
+            'status' => 1,
+            'message' => "Mensaje 🚀",
+            'data' => []
+        ];
+
+        echo json_encode($res);
+        wp_die();
+    }
+
+    // Main function for getting courses list
     public function get_resume_courses(){
+        return [];
+
         $db = new Database;
         $courses = $db->get_courses();
 
@@ -47,11 +69,12 @@ class Process{
             }
 
             // Add to array courses
-            $courses[$key]['total_course'] = $total_course;
-            $courses[$key]['total_paid'] = $total_paid;
+            $courses[$key]['total_course'] = wc_price($total_course);
+            $courses[$key]['total_paid'] = wc_price($total_paid);
+            $courses[$key]['total_pending'] = wc_price($total_course - $total_paid);
         }
 
-        error_log(print_r( $courses, true ));
+        return $courses;
     }
 
 
@@ -93,6 +116,3 @@ class Process{
 
 }
 
-
-
-// error_log(print_r($count_payments.' - '.$result . ' - Order: '. $order['order_id'],true));

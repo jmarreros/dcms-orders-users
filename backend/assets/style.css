@@ -1,0 +1,41 @@
+.report-header{
+  display: flex;
+  justify-content: space-between;
+}
+
+.report-header{
+  margin:20px 0;
+}
+
+.report-header label{
+  font-weight: bold;
+}
+
+.dates-box > div{
+  display: inline-block;
+  margin-right: 20px;
+}
+
+.dcms-table-report{
+    width: 100%;
+}
+
+.dcms-table-report th{
+  background-color:grey;
+  color:white;
+}
+
+.dcms-table-report tr td{
+  text-align: right;
+}
+
+.dcms-table-report tr td:last-child,
+.dcms-table-report tr td:nth-child(1){
+  text-align: center;
+}
+
+.dcms-table-report tr td:nth-child(2){
+  text-align: left;
+}
+
+

@@ -47,7 +47,7 @@ class Database{
             GROUP BY post_id
         ) pms ON pms.post_id = p.ID
         WHERE p.post_type = 'stm-courses'
-        AND p.post_status = 'publish'";
+        AND p.post_status = 'publish' LIMIT 5";
 
         return $this->wpdb->get_results($sql, ARRAY_A);
     }

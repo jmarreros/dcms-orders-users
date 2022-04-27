@@ -3,6 +3,7 @@
 namespace dcms\orders\includes;
 
 use dcms\orders\reports\Process;
+use dcms\orders\includes\Enqueue;
 
 /**
  * Class for creating a dashboard submenu
@@ -27,8 +28,8 @@ class Submenu{
 
     // Callback, show view
     public function submenu_page_callback(){
-        $process = new Process;
-        $process->get_resume_courses();
+        Enqueue::enqueue_scripts_backend();
+        wp_enqueue_style('dcms-admin-order');
 
         include_once (DCMS_ORDERS_PATH. '/views/backend/main-screen.php');
     }

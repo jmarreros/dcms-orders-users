@@ -20,6 +20,7 @@ use dcms\orders\includes\Submenu;
 use dcms\orders\includes\Shortcode;
 use dcms\orders\includes\Orders;
 use dcms\orders\includes\Attachment;
+use dcms\orders\reports\Process;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -84,6 +85,7 @@ final class Loader{
 		new Shortcode();
 		new Orders();
 		new Attachment();
+		new Process();
 	}
 
 }
