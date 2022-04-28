@@ -11,7 +11,6 @@ var vmreport = new Vue({
     },
     created: function(){
         this.loadData()
-        // this.loadData(this.page)
     },
     methods: {
         loadData() {
@@ -23,20 +22,16 @@ var vmreport = new Vue({
                 data: {
                     action : 'dcms_ajax_courses_report',
                     nonce : dcmsReport.nonce,
+                    dstart: j('#dstart').val(),
+                    dend: j('#dend').val(),
+                    tcourse: j('#tcourse').val()
                 },
                 success:function(res){
+                    vmreport.loading = false
                     console.log(res)
                 }
             })
-        },
-        // nextPage(){
-        //     this.page++
-        //     this.loadData(this.page)
-        // },
-        // prevPage(){
-        //     this.page--
-        //     this.loadData(this.page)
-        // }
+        }
     }
 })
 

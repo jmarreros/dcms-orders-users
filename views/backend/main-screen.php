@@ -7,12 +7,16 @@ $courses = [];
 
     <h1><?php _e('Reporte de Cursos', 'dcms-orders-users') ?></h1>
 
-    <form method="post">
+    <form method="post"  v-on:submit.prevent="onSubmit">
         <section class="report-header">
             <div class="dates-box">
-                <div><label for="dstart">Fecha Inicio: </label><input id="dstart" name="dstart" type="date" value=""> </div>
-                <div><label for="dend">Fecha Fin: </label><input id="dend" name="dend" type="date" value=""> </div>
+                <div><label for="dstart">Fecha Inicio: </label><input id="dstart" name="dstart" type="date" value="<?= date('Y-m-d', strtotime("first day of previous month")) ?>"> </div>
+                <div><label for="dend">Fecha Fin: </label><input id="dend" name="dend" type="date" value="<?= date('Y-m-d') ?>"> </div>
+                <div><input type="search" id="tcourse" placeholder="Ingresa algún texto" /></div>
                 <input type="submit" id="search-submit" name="search-submit" class="button" value="Buscar cursos">
+            </div>
+            <div class="export-box">
+                <!-- <input type="button" id="export" name="export" class="button" value="Exportar Cursos"> -->
             </div>
         </section>
     </form>
@@ -39,6 +43,13 @@ $courses = [];
         </tr>
         <?php endforeach; ?>
     </table>
+
+
+    <section class="footer-container">
+        <section v-if="loading" class="loading-container">
+            <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+        </section>
+    </section>
 
 </div>
 
