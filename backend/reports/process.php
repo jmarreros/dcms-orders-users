@@ -32,7 +32,7 @@ class Process{
     }
 
     // Main function for getting courses list
-    public function get_resume_courses($dstart, $dend, $tcourse){
+    public function get_resume_courses($dstart = '', $dend = '', $tcourse = ''){
         $db = new Database;
         $courses = $db->get_courses( $dstart, $dend, $tcourse);
 
@@ -73,9 +73,9 @@ class Process{
             }
 
             // Add to array courses
-            $courses[$key]['total_course'] = wc_price($total_course);
-            $courses[$key]['total_paid'] = wc_price($total_paid);
-            $courses[$key]['total_pending'] = wc_price($total_course - $total_paid);
+            $courses[$key]['total_course'] = $total_course;
+            $courses[$key]['total_paid'] = $total_paid;
+            $courses[$key]['total_pending'] = $total_course - $total_paid;
         }
 
         return $courses;

@@ -19,9 +19,8 @@ class Database{
                     p.ID AS id_course,
                     p.post_date AS date_course,
                     p.post_title AS name_course,
-                    pmp.id_product,
                     uc.count_students,
-                    pms.prices,
+                    pmp.id_product,
                     pmu.url_product2
         FROM {$this->wpdb->prefix}posts p
         INNER JOIN (
@@ -38,15 +37,6 @@ class Database{
             FROM {$this->wpdb->prefix}postmeta
             WHERE  meta_key = 'WooCommerce_link_product'
         ) pmu ON pmu.post_id = p.id
-        INNER JOIN (
-            SELECT pm.post_id, GROUP_CONCAT(pm.meta_value) AS prices
-            FROM {$this->wpdb->prefix}postmeta pm
-            INNER JOIN {$this->wpdb->prefix}posts p ON p.ID = pm.post_id
-            WHERE p.post_type = 'stm-courses'
-            AND p.post_status = 'publish'
-            AND pm.meta_key IN ( 'price', 'sale_price' )
-            GROUP BY post_id
-        ) pms ON pms.post_id = p.ID
         WHERE p.post_type = 'stm-courses'
         AND p.post_status = 'publish'";
 
@@ -67,8 +57,6 @@ class Database{
         }
 
         $sql .=" ORDER BY p.post_date DESC";
-
-        error_log(print_r($sql,true));
 
         return $this->wpdb->get_results($sql, ARRAY_A);
     }
@@ -133,3 +121,16 @@ class Database{
         }
 
 }
+
+
+// pms.prices
+
+// INNER JOIN (
+//     SELECT pm.post_id, GROUP_CONCAT(pm.meta_value) AS prices
+//     FROM {$this->wpdb->prefix}postmeta pm
+//     INNER JOIN {$this->wpdb->prefix}posts p ON p.ID = pm.post_id
+//     WHERE p.post_type = 'stm-courses'
+//     AND p.post_status = 'publish'
+//     AND pm.meta_key IN ( 'price', 'sale_price' )
+//     GROUP BY post_id
+// ) pms ON pms.post_id = p.ID

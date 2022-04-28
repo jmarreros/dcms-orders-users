@@ -21,6 +21,7 @@ use dcms\orders\includes\Shortcode;
 use dcms\orders\includes\Orders;
 use dcms\orders\includes\Attachment;
 use dcms\orders\reports\Process;
+use dcms\orders\reports\Export;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -54,6 +55,7 @@ final class Loader{
 		include_once ( DCMS_ORDERS_PATH . '/includes/attachment.php');
 		include_once ( DCMS_ORDERS_PATH . '/backend/reports/database.php');
 		include_once ( DCMS_ORDERS_PATH . '/backend/reports/process.php');
+		include_once ( DCMS_ORDERS_PATH . '/backend/reports/export.php');
 	}
 
 	// Load tex domain
@@ -86,6 +88,7 @@ final class Loader{
 		new Orders();
 		new Attachment();
 		new Process();
+		new Export();
 	}
 
 }

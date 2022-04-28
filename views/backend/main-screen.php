@@ -6,19 +6,23 @@ defined( 'ABSPATH' ) || exit;
 
     <h1><?php _e('Reporte de Cursos', 'dcms-orders-users') ?></h1>
 
-    <form method="post"  v-on:submit.prevent="onSubmit">
+
         <section class="report-header">
-            <div class="dates-box">
-                <div><label for="dstart">Fecha Inicio: </label><input id="dstart" name="dstart" type="date" value="<?= date('Y-m-d', strtotime("first day of previous month")) ?>"> </div>
-                <div><label for="dend">Fecha Fin: </label><input id="dend" name="dend" type="date" value="<?= date('Y-m-d') ?>"> </div>
-                <div><input type="search" id="tcourse" placeholder="Ingresa algún texto" /></div>
-                <input type="submit" id="search-submit" name="search-submit" class="button" value="Buscar cursos">
-            </div>
-            <div class="export-box">
-                <!-- <input type="button" id="export" name="export" class="button" value="Exportar Cursos"> -->
-            </div>
+            <form method="post"  v-on:submit.prevent="onSubmit">
+                <div class="dates-box">
+                    <div><label for="dstart">Fecha Inicio: </label><input id="dstart" name="dstart" type="date" value="<?= date('Y-m-d', strtotime("first day of previous month")) ?>" :disabled="loading" > </div>
+                    <div><label for="dend">Fecha Fin: </label><input id="dend" name="dend" type="date" value="<?= date('Y-m-d') ?>" :disabled="loading" > </div>
+                    <div><input type="search" id="tcourse" placeholder="Ingresa algún texto" :disabled="loading" ></div>
+                    <input type="submit" id="search-submit" name="search-submit" class="button" value="Buscar cursos" :disabled="loading" >
+                </div>
+            </form>
+            <form method="post" action="<?php echo admin_url( 'admin-post.php' ) ?>">
+                <div class="export-box">
+                    <input type="submit" id="export" name="export" class="button" value="Exportar Cursos">
+                    <input type="hidden" name="action" value="export_courses">
+                </div>
+            </form>
         </section>
-    </form>
 
     <section class="message-container">
         <section v-if="loading" class="loading-container">
@@ -44,9 +48,9 @@ defined( 'ABSPATH' ) || exit;
                 <td>{{ format_date(item.date_course) }}</td>
                 <td>{{ item.name_course }}</td>
                 <td>{{ item.count_students }}</td>
-                <td v-html="item.total_course"></td>
-                <td v-html="item.total_paid"></td>
-                <td v-html="item.total_pending"></td>
+                <td>{{ Intl.NumberFormat('en-US').format(item.total_course) }}</td>
+                <td>{{ Intl.NumberFormat('en-US').format(item.total_paid) }}</td>
+                <td>{{ Intl.NumberFormat('en-US').format(item.total_pending) }}</td>
                 <td><a class="button" href="#">Detalle</a></td>
             </tr>
         </table>
