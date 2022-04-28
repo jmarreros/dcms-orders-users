@@ -15,15 +15,15 @@ class Process{
     public function dcms_courses_report(){
         Helper::validate_nonce('ajax-nonce-report');
 
+        // Filter parameters
         $dstart = $_POST['dstart']??'';
         $dend = $_POST['dend']??'';
         $tcourse = $_POST['tcourse']??'';
 
-        $data = $this->get_resume_courses();
+        $data = $this->get_resume_courses($dstart, $dend, $tcourse);
 
         $res = [
             'status' => 1,
-            'message' => "",
             'data' => $data
         ];
 
@@ -32,9 +32,9 @@ class Process{
     }
 
     // Main function for getting courses list
-    public function get_resume_courses(){
+    public function get_resume_courses($dstart, $dend, $tcourse){
         $db = new Database;
-        $courses = $db->get_courses();
+        $courses = $db->get_courses( $dstart, $dend, $tcourse);
 
         foreach ($courses as $key => $course) {
 

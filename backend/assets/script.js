@@ -5,9 +5,7 @@ var vmreport = new Vue({
     data: {
         results: [],
         status: 0,
-        page : 1,
         loading: true,
-        totalPages: 0
     },
     created: function(){
         this.loadData()
@@ -28,11 +26,17 @@ var vmreport = new Vue({
                 },
                 success:function(res){
                     vmreport.loading = false
-                    console.log(res)
+                    vmreport.results = res.data
                 }
             })
+        },
+        onSubmit(){
+            this.loadData()
+        },
+        format_date($str_date){
+            return new Date($str_date).toLocaleDateString('es-ES');
         }
-    }
+    },
 })
 
 

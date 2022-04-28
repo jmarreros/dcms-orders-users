@@ -1,8 +1,7 @@
 <?php
-// Pass values:
-$courses = [];
-?>
+defined( 'ABSPATH' ) || exit;
 
+?>
 <div id="report-courses" class="wrap" >
 
     <h1><?php _e('Reporte de Cursos', 'dcms-orders-users') ?></h1>
@@ -21,35 +20,39 @@ $courses = [];
         </section>
     </form>
 
-    <table class="dcms-table-report striped">
-        <tr>
-            <th>Fecha</th>
-            <th>Nombre</th>
-            <th>Inscritos</th>
-            <th>Total</th>
-            <th>Pagado</th>
-            <th>Pendiente</th>
-            <th></th>
-        </tr>
-        <?php foreach ($courses as $course): ?>
-        <tr>
-            <td><?= date_format(date_create($course['date_course']), 'd/m/Y') ?></td>
-            <td><?= $course['name_course'] ?></td>
-            <td><?= $course['count_students'] ?></td>
-            <td><?= wc_price($course['total_course']) ?></td>
-            <td><?= wc_price($course['total_paid']) ?></td>
-            <td><?= wc_price($course['total_course'] - $course['total_paid']) ?></td>
-            <td><a class="button" href="#">Detalle</a></td>
-        </tr>
-        <?php endforeach; ?>
-    </table>
-
-
-    <section class="footer-container">
+    <section class="message-container">
         <section v-if="loading" class="loading-container">
             <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
         </section>
+        <section class="total-container">
+            <span>Total : {{ results.length }}</span>
+        </section>
     </section>
+
+    <div style="overflow-x: auto;">
+        <table class="dcms-table-report striped">
+            <tr>
+                <th>Fecha</th>
+                <th>Nombre</th>
+                <th>Inscritos</th>
+                <th>Total</th>
+                <th>Pagado</th>
+                <th>Pendiente</th>
+                <th></th>
+            </tr>
+            <tr v-for="item in results" :key="item.id_course">
+                <td>{{ format_date(item.date_course) }}</td>
+                <td>{{ item.name_course }}</td>
+                <td>{{ item.count_students }}</td>
+                <td v-html="item.total_course"></td>
+                <td v-html="item.total_paid"></td>
+                <td v-html="item.total_pending"></td>
+                <td><a class="button" href="#">Detalle</a></td>
+            </tr>
+        </table>
+    </div>
+
+    <div v-if="!results.length && !loading" class="no-items">No hay ningún curso</div>
 
 </div>
 

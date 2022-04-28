@@ -13,7 +13,8 @@ class Database{
 
     // Main query, gets all courses with relevant info
     // Courses have two associate produts, id_product and url_product2
-    public function get_courses(){
+    // $dstart, $dend, $tcourse, filter parameters
+    public function get_courses( $dstart, $dend, $tcourse ){
         $sql = "SELECT
                     p.ID AS id_course,
                     p.post_date AS date_course,
@@ -47,7 +48,27 @@ class Database{
             GROUP BY post_id
         ) pms ON pms.post_id = p.ID
         WHERE p.post_type = 'stm-courses'
-        AND p.post_status = 'publish' LIMIT 5";
+        AND p.post_status = 'publish'";
+
+        if ( ! empty($dstart) && empty($dend)){
+            $sql .= " AND p.post_date >= '{$dstart}'";
+        }
+
+        if ( empty($dstart) && ! empty($dend)){
+            $sql .= " AND p.post_date <= '{$dend}'";
+        }
+
+        if ( ! empty($dstart) &&  ! empty($dend) ){
+            $sql .= " AND p.post_date BETWEEN '{$dstart}' AND '{$dend}'";
+        }
+
+        if ( ! empty($tcourse) ){
+            $sql .= " AND p.post_title like '%{$tcourse}%'";
+        }
+
+        $sql .=" ORDER BY p.post_date DESC";
+
+        error_log(print_r($sql,true));
 
         return $this->wpdb->get_results($sql, ARRAY_A);
     }
