@@ -81,6 +81,34 @@ class Process{
         return $courses;
     }
 
+    // Get detail course
+    public function get_detail_course($id_products){
+        $db = new Database;
+        $items_orders = $db->get_items_orders_by_ids_product( $id_products, true );
+
+        foreach ($items_orders as $key => $item_order) {
+            $total_paid = 0;
+
+            $has_deposits = $this->_has_deposit( $item_order['deposit_info']);
+
+            // Order is completed o waiting total paid
+            if ( $item_order['post_status'] === 'wc-completed' ||
+                ( $item_order['post_status'] === 'wc-on-hold' && ! $has_deposits ) ){
+
+                $total_paid = $item_order['item_total'];
+
+            } else if ( $has_deposits ) { // Order uncompleted paid
+
+                $count_payments = $db->count_sub_orders_completed($item_order['order_id']);
+                $total_paid = $this->_get_paid_deposit_amount($item_order['deposit_info'], $count_payments);
+            }
+
+            $items_orders[$key]['total_paid'] = $total_paid;
+            $items_orders[$key]['total_pending'] = $item_order['item_total'] - $total_paid;
+        }
+
+        return $items_orders;
+    }
 
     // Verify if the order has deposit enabled
     private function _has_deposit($deposit_info){

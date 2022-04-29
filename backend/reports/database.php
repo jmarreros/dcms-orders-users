@@ -67,10 +67,12 @@ class Database{
         // Include user in the query
         $field_user = '';
         $inner_user = '';
+        $order_by = '';
         if ($include_user){
             $field_user = "pm1.meta_value AS user_name,pm2.meta_value AS user_lastname,";
             $inner_user = "INNER JOIN {$this->wpdb->prefix}postmeta pm1 ON pm1.post_id = p.ID AND pm1.meta_key = '_billing_first_name'
                            INNER JOIN {$this->wpdb->prefix}postmeta pm2 ON pm2.post_id = p.ID AND pm2.meta_key = '_billing_last_name'";
+            $order_by = "ORDER BY oi.order_id DESC";
         }
 
         $sql ="SELECT
@@ -98,7 +100,8 @@ class Database{
                 p.post_status IN ('wc-completed','wc-on-hold','wc-partially-paid','wc-processing')
                 AND oi.order_item_type = 'line_item'
                 AND oim.meta_key = '_product_id'
-                AND oim.meta_value IN ({$str_ids})";
+                AND oim.meta_value IN ({$str_ids})
+                {$order_by}";
 
         return $this->wpdb->get_results($sql, ARRAY_A);
     }

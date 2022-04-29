@@ -42,7 +42,7 @@ $current_url = admin_url() . DCMS_ORDERS_SUBMENU . '?page='. DCMS_ORDERS_MAINPAG
                 <th>Total</th>
                 <th>Pagado</th>
                 <th>Pendiente</th>
-                <th><?= $url_detail ?></th>
+                <th></th>
             </tr>
             <tr v-for="item in results" :key="item.id_course">
                 <td>{{ format_date(item.date_course) }}</td>
@@ -51,7 +51,7 @@ $current_url = admin_url() . DCMS_ORDERS_SUBMENU . '?page='. DCMS_ORDERS_MAINPAG
                 <td>{{ Intl.NumberFormat('en-US').format(item.total_course) }}</td>
                 <td>{{ Intl.NumberFormat('en-US').format(item.total_paid) }}</td>
                 <td>{{ Intl.NumberFormat('en-US').format(item.total_pending) }}</td>
-                <td><a class="button" :href="'<?= $current_url ?>' + '&id_products=' +  item.id_product + '-' + item.id_product2" >Detalle</a></td>
+                <td><a class="button" :href="'<?= $current_url ?>' + '&id_products=' +  item.id_product + '-' + item.id_product2 + '&course_name=' + encodeURIComponent(item.name_course)" >Detalle</a></td>
             </tr>
         </table>
     </div>

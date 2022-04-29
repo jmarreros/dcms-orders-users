@@ -31,6 +31,16 @@ class Submenu{
         Enqueue::enqueue_scripts_backend();
         wp_enqueue_style('dcms-admin-order');
 
-        include_once (DCMS_ORDERS_PATH. '/views/backend/main-screen.php');
+        if ( isset($_GET['course_name']) ){
+            $id_products = explode('-', $_GET['id_products']??'');
+            $course_name = $_GET['course_name'];
+
+            $process = new Process;
+            $items = $process->get_detail_course($id_products);
+
+            include_once (DCMS_ORDERS_PATH. '/views/backend/course-detail.php');
+        } else {
+            include_once (DCMS_ORDERS_PATH. '/views/backend/main-screen.php');
+        }
     }
 }

@@ -38,6 +38,23 @@
   text-align: left;
 }
 
+.dcms-table-details.dcms-table-report tr td:nth-child(1){
+  text-align: left;
+}
+
+.dcms-table-report th,
+.dcms-table-details th,
+.dcms-table-details td{
+  padding:5px;
+}
+
+.dcms-table-details tfoot tr{
+  background-color: grey;
+  color:white;
+}
+
+
+
 .no-items{
   margin:20px 0;
 }
