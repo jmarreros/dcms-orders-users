@@ -1,6 +1,6 @@
 <?php
 defined( 'ABSPATH' ) || exit;
-
+$current_url = admin_url() . DCMS_ORDERS_SUBMENU . '?page='. DCMS_ORDERS_MAINPAGE;
 ?>
 <div id="report-courses" class="wrap" >
 
@@ -42,7 +42,7 @@ defined( 'ABSPATH' ) || exit;
                 <th>Total</th>
                 <th>Pagado</th>
                 <th>Pendiente</th>
-                <th></th>
+                <th><?= $url_detail ?></th>
             </tr>
             <tr v-for="item in results" :key="item.id_course">
                 <td>{{ format_date(item.date_course) }}</td>
@@ -51,7 +51,7 @@ defined( 'ABSPATH' ) || exit;
                 <td>{{ Intl.NumberFormat('en-US').format(item.total_course) }}</td>
                 <td>{{ Intl.NumberFormat('en-US').format(item.total_paid) }}</td>
                 <td>{{ Intl.NumberFormat('en-US').format(item.total_pending) }}</td>
-                <td><a class="button" href="#">Detalle</a></td>
+                <td><a class="button" :href="'<?= $current_url ?>' + '&id_products=' +  item.id_product + '-' + item.id_product2" >Detalle</a></td>
             </tr>
         </table>
     </div>

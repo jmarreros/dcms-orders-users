@@ -21,7 +21,7 @@ class Submenu{
             __('Orders Users Details','dcms-orders-users'),
             __('Orders Users Details','dcms-orders-users'),
             'manage_options',
-            'orders-users',
+            DCMS_ORDERS_MAINPAGE,
             [$this, 'submenu_page_callback']
         );
     }

@@ -61,11 +61,21 @@ class Database{
         return $this->wpdb->get_results($sql, ARRAY_A);
     }
 
-    public function get_items_orders_by_ids_product($ids_product){
+    public function get_items_orders_by_ids_product($ids_product, $include_user = false){
         $str_ids = implode(',', $ids_product);
+
+        // Include user in the query
+        $field_user = '';
+        $inner_user = '';
+        if ($include_user){
+            $field_user = "pm1.meta_value AS user_name,pm2.meta_value AS user_lastname,";
+            $inner_user = "INNER JOIN {$this->wpdb->prefix}postmeta pm1 ON pm1.post_id = p.ID AND pm1.meta_key = '_billing_first_name'
+                           INNER JOIN {$this->wpdb->prefix}postmeta pm2 ON pm2.post_id = p.ID AND pm2.meta_key = '_billing_last_name'";
+        }
 
         $sql ="SELECT
                 oi.order_id,
+                {$field_user}
                 p.post_status,
                 oi.order_item_id,
                 deposit_info,
@@ -83,6 +93,7 @@ class Database{
                     WHERE meta_key = '_line_total'
                 ) oimt ON oimt.order_item_id = oi.order_item_id
                 INNER JOIN {$this->wpdb->prefix}posts p ON p.ID = oi.order_id
+                {$inner_user}
                 WHERE
                 p.post_status IN ('wc-completed','wc-on-hold','wc-partially-paid','wc-processing')
                 AND oi.order_item_type = 'line_item'
