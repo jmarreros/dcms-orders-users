@@ -117,22 +117,34 @@ class Database{
         return $this->wpdb->get_var($sql)??0;
     }
 
-        // Auxiliar function for getting id product form url, por product2
-        public function get_product_id_from_url($product_url){
-            preg_match('/producto\/(.+)\//', $product_url, $matches);
-            $product_slug = $matches[1]??'';
+    // Auxiliar function for getting id product form url, por product2
+    public function get_product_id_from_url($product_url){
+        preg_match('/producto\/(.+)\//', $product_url, $matches);
+        $product_slug = $matches[1]??'';
 
-            if ( $product_slug ){
+        if ( $product_slug ){
 
-                $sql = "SELECT ID
-                        FROM {$this->wpdb->prefix}posts
-                        WHERE post_name = '{$product_slug}'
-                        AND post_type = 'product'";
+            $sql = "SELECT ID
+                    FROM {$this->wpdb->prefix}posts
+                    WHERE post_name = '{$product_slug}'
+                    AND post_type = 'product'";
 
-                return $this->wpdb->get_var($sql)??0;
-            }
-            return 0;
+            return $this->wpdb->get_var($sql)??0;
         }
+        return 0;
+    }
+
+    public function search_duplicate_linkproduct( $url_link_product ){
+        if ( ! empty( $url_link_product)  ){
+            $sql = "SELECT COUNT(post_id)
+                    FROM {$this->wpdb->prefix}postmeta
+                    WHERE meta_key = '" .DCMS_META_LINK_PRODUCT. "'
+                    AND meta_value = '$url_link_product'";
+
+            return $this->wpdb->get_var($sql)??0;
+        }
+        return 0;
+    }
 
 }
 
