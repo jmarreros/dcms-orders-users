@@ -9,16 +9,34 @@ class Export{
 
     public function __construct(){
         add_action( 'admin_post_export_courses', [$this, 'dcms_export_courses'] );
+        add_action( 'admin_post_export_course', [$this, 'dcms_export_course'] );
     }
 
     public function dcms_export_courses(){
         $process = new Process;
         $data = $process->get_resume_courses();
 
-        //clean data
-
-
         $this->download_send_headers("courses_export_" . date("Y-m-d") . ".csv");
+
+        ob_start();
+        $df = fopen("php://output", 'w');
+        fputcsv( $df, array_keys( reset($data) ) );
+        foreach ( $data as $row ) {
+            fputcsv($df, $row);
+        }
+        fclose($df);
+        echo ob_get_clean();
+        die();
+    }
+
+
+    public function dcms_export_course(){
+        $process = new Process;
+        $id_products = explode(',', $_POST['id_products']);
+
+        $data = $process->get_detail_course($id_products);
+
+        $this->download_send_headers("course_export_" . date("Y-m-d") . ".csv");
 
         ob_start();
         $df = fopen("php://output", 'w');

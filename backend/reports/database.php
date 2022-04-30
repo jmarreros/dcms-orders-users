@@ -103,8 +103,6 @@ class Database{
                 AND oim.meta_value IN ({$str_ids})
                 {$order_by}";
 
-        error_log(print_r($sql,true));
-
         return $this->wpdb->get_results($sql, ARRAY_A);
     }
 

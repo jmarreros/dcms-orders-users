@@ -1,6 +1,9 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 $current_url = admin_url() . DCMS_ORDERS_SUBMENU . '?page='. DCMS_ORDERS_MAINPAGE;
+$course_url = admin_url() . 'post.php?post=';
+$product_url = admin_url() . 'post.php?post=';
+$lms_dashboard_url = admin_url() . '?page=stm-lms-dashboard#/course/';
 ?>
 <div id="report-courses" class="wrap" >
 
@@ -38,16 +41,35 @@ $current_url = admin_url() . DCMS_ORDERS_SUBMENU . '?page='. DCMS_ORDERS_MAINPAG
             <tr>
                 <th>Fecha</th>
                 <th>Nombre</th>
+                <th>Producto</th>
                 <th>Inscritos</th>
                 <th>Total</th>
                 <th>Pagado</th>
                 <th>Pendiente</th>
-                <th></th>
+                <th>Detalle</th>
             </tr>
             <tr v-for="item in results" :key="item.id_course">
                 <td>{{ format_date(item.date_course) }}</td>
-                <td>{{ item.name_course }}</td>
-                <td>{{ item.count_students }}</td>
+                <td>
+                    <a :href="'<?= $course_url ?>' + item.id_course + '&action=edit'" target="_blank">
+                        {{ item.name_course }}
+                    </a>
+                </td>
+                <td>
+                    <small>
+                        <a :href="'<?= $product_url ?>' + item.id_product + '&action=edit'" target="_blank">
+                            {{item.id_product}}
+                        </a><br>
+                        <a :href="'<?= $product_url ?>' + item.id_product2 + '&action=edit'" target="_blank">
+                            {{item.id_product2 ? item.id_product2 : ''}}
+                        </a>
+                    </small>
+                </td>
+                <td>
+                    <a :href="'<?= $lms_dashboard_url ?>' + item.id_course" target="_blank">
+                        {{ item.count_students }}
+                    </a>
+                </td>
                 <td>{{ Intl.NumberFormat('en-US').format(item.total_course) }}</td>
                 <td>{{ Intl.NumberFormat('en-US').format(item.total_paid) }}</td>
                 <td>{{ Intl.NumberFormat('en-US').format(item.total_pending) }}</td>
