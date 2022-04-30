@@ -44,6 +44,7 @@ class Process{
 
             // Build id_products
             $id_products[0] = $courses[$key]['id_product'];
+            $id_products[1] = 0;
             if ( $id_product2 > 0 ) $id_products[1] = $id_product2;
 
             $items_orders = $db->get_items_orders_by_ids_product( $id_products );

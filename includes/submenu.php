@@ -28,7 +28,6 @@ class Submenu{
 
     // Callback, show view
     public function submenu_page_callback(){
-        Enqueue::enqueue_scripts_backend();
         wp_enqueue_style('dcms-admin-order');
 
         if ( isset($_GET['course_name']) ){
@@ -40,6 +39,7 @@ class Submenu{
 
             include_once (DCMS_ORDERS_PATH. '/views/backend/course-detail.php');
         } else {
+            Enqueue::enqueue_scripts_backend();
             include_once (DCMS_ORDERS_PATH. '/views/backend/main-screen.php');
         }
     }
