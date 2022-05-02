@@ -18,11 +18,12 @@ class Submenu{
     public function register_submenu(){
         add_submenu_page(
             DCMS_ORDERS_SUBMENU,
-            __('Orders Users Details','dcms-orders-users'),
-            __('Orders Users Details','dcms-orders-users'),
+            __('Reporte Órdenes Usuarios','dcms-orders-users'),
+            __('Reporte Órdenes Usuarios','dcms-orders-users'),
             'manage_options',
             DCMS_ORDERS_MAINPAGE,
-            [$this, 'submenu_page_callback']
+            [$this, 'submenu_page_callback'],
+            0
         );
     }
 
