@@ -2,7 +2,7 @@
 /*
 Plugin Name: Orders Users Details
 Plugin URI: https://decodecms.com
-Description: Plugin orders users, show details in front end with a shortcode, integrates with woocommerce depostis plugin
+Description: Plugin orders users, show details in front end with a shortcode and reports in backend, integrates with woocommerce depostis plugin for reporting
 Version: 1.0
 Author: Jhon Marreros Guzmán
 Author URI: https://decodecms.com
@@ -22,7 +22,6 @@ use dcms\orders\includes\Orders;
 use dcms\orders\includes\Attachment;
 use dcms\orders\reports\Process;
 use dcms\orders\reports\Export;
-use dcms\orders\metabox\Metabox;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -44,7 +43,6 @@ final class Loader{
 		define ('DCMS_ORDERS_DETAILPAGE', 'detail-orders');
 		define ('DCMS_ORDERS_KEY_META', '_uploaded_files');
 		define ('DCMS_UPLOAD_FOLDER', 'uploads/archivos-subidos/'); // inside wp-content folder
-		define ('DCMS_META_LINK_PRODUCT', 'WooCommerce_link_product');
 	}
 
 	// Load all the files we need
@@ -60,7 +58,6 @@ final class Loader{
 		include_once ( DCMS_ORDERS_PATH . '/backend/reports/database.php');
 		include_once ( DCMS_ORDERS_PATH . '/backend/reports/process.php');
 		include_once ( DCMS_ORDERS_PATH . '/backend/reports/export.php');
-		include_once ( DCMS_ORDERS_PATH . '/backend/metabox/metabox.php');
 	}
 
 	// Load tex domain
@@ -86,20 +83,18 @@ final class Loader{
 		$this->load_includes();
 		$this->load_domain();
 		$this->add_link_plugin();
-		new Plugin();
-		new Enqueue();
-		new SubMenu();
-		new Shortcode();
-		new Orders();
-		new Attachment();
-		if ( is_admin() ){
-			new Process();
-			new Export();
-			new Metabox();
-		}
+		new Plugin;
+		new Enqueue;
+		new SubMenu;
+		new Shortcode;
+		new Orders;
+		new Attachment;
+
+		new Process;
+		new Export;
 	}
 
 }
 
-$dcms_orders_process = new Loader();
+$dcms_orders_process = new Loader;
 $dcms_orders_process->init();

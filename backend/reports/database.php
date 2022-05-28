@@ -81,7 +81,8 @@ class Database{
                 p.post_status,
                 oi.order_item_id,
                 deposit_info,
-                item_total
+                item_total,
+                pmc.meta_value currency
                 FROM {$this->wpdb->prefix}woocommerce_order_items oi
                 INNER JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta oim ON oi.order_item_id = oim.order_item_id
                 LEFT JOIN (
@@ -95,6 +96,7 @@ class Database{
                     WHERE meta_key = '_line_total'
                 ) oimt ON oimt.order_item_id = oi.order_item_id
                 INNER JOIN {$this->wpdb->prefix}posts p ON p.ID = oi.order_id
+                INNER JOIN {$this->wpdb->prefix}postmeta pmc ON pmc.post_id = oi.order_id AND pmc.meta_key = '_order_currency'
                 {$inner_user}
                 WHERE
                 p.post_status IN ('wc-completed','wc-on-hold','wc-partially-paid','wc-processing')
@@ -134,29 +136,5 @@ class Database{
         return 0;
     }
 
-    public function search_duplicate_linkproduct( $url_link_product ){
-        if ( ! empty( $url_link_product)  ){
-            $sql = "SELECT COUNT(post_id)
-                    FROM {$this->wpdb->prefix}postmeta
-                    WHERE meta_key = '" .DCMS_META_LINK_PRODUCT. "'
-                    AND meta_value = '$url_link_product'";
-
-            return $this->wpdb->get_var($sql)??0;
-        }
-        return 0;
-    }
-
 }
 
-
-// pms.prices
-
-// INNER JOIN (
-//     SELECT pm.post_id, GROUP_CONCAT(pm.meta_value) AS prices
-//     FROM {$this->wpdb->prefix}postmeta pm
-//     INNER JOIN {$this->wpdb->prefix}posts p ON p.ID = pm.post_id
-//     WHERE p.post_type = 'stm-courses'
-//     AND p.post_status = 'publish'
-//     AND pm.meta_key IN ( 'price', 'sale_price' )
-//     GROUP BY post_id
-// ) pms ON pms.post_id = p.ID
