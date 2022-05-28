@@ -52,18 +52,18 @@ $total_pending = 0;
                         echo "</a>";
                     ?>
                     </td>
-                    <td><?= number_format($item['item_total']) ?></td>
-                    <td><?= number_format($item['total_paid']) ?></td>
-                    <td><?= number_format($item['total_pending']) ?></td>
+                    <td><?= number_format($item['item_total'], 2) ?></td>
+                    <td><?= number_format($item['total_paid'], 2) ?></td>
+                    <td><?= number_format($item['total_pending'], 2) ?></td>
                 </tr>
             <?php endforeach; ?>
             <tfoot>
                 <tr>
                     <td>Totales</td>
                     <td></td>
-                    <td><?= number_format($item_total) ?></td>
-                    <td><?= number_format($total_paid) ?></td>
-                    <td><?= number_format($total_pending) ?></td>
+                    <td><?= number_format($item_total, 2) ?></td>
+                    <td><?= number_format($total_paid, 2) ?></td>
+                    <td><?= number_format($total_pending, 2) ?></td>
                 </tr>
             </tfoot>
         </table>

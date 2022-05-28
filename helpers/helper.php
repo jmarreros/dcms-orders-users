@@ -46,14 +46,12 @@ class Helper{
         return $content_folder;
     }
 
-  // MultiCurrency converter default currency with rate
+  // MultiCurrency converter to default currency
   public static function currency_converter($amount, $currency){
     $data = get_option('woo_multi_currency_params');
 
     if ( ! isset($data['currency_default'])
-        || $data['currency_default'] === $currency ) {
-      return $amount;
-    }
+        || $data['currency_default'] === $currency ) return $amount;
 
     $index = array_search($currency, $data['currency']);
     if ( $index === false ) return $amount;

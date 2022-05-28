@@ -89,7 +89,6 @@ final class Loader{
 		new Shortcode;
 		new Orders;
 		new Attachment;
-
 		new Process;
 		new Export;
 	}

@@ -54,22 +54,23 @@ class Process{
             $total_paid = 0;
 
             foreach ($items_orders as $item_order) {
+                $currency = $item_order['currency'];
 
-                $total_course += $item_order['item_total'];
+                $total_course += Helper::currency_converter($item_order['item_total'], $currency);
                 $has_deposits = $this->_has_deposit( $item_order['deposit_info']);
 
                 // Order is completed o waiting total paid
                 if ( $item_order['post_status'] === 'wc-completed' ||
                     ( $item_order['post_status'] === 'wc-on-hold' && ! $has_deposits ) ){
 
-                    $total_paid += $item_order['item_total'];
+                    $total_paid += Helper::currency_converter($item_order['item_total'], $currency);
 
                 } else if ( $has_deposits ) { // Order uncompleted paid
 
                     $count_payments = $db->count_sub_orders_completed($item_order['order_id']);
                     $amount_item = $this->_get_paid_deposit_amount($item_order['deposit_info'], $count_payments);
 
-                    $total_paid += $amount_item;
+                    $total_paid += Helper::currency_converter($amount_item, $currency);
                 }
             }
 
@@ -105,7 +106,7 @@ class Process{
             }
 
             // Multicurrency support
-            $currency = $items_orders[$key]['currency'];
+            $currency = $item_order['currency'];
             $total_item = Helper::currency_converter($item_order['item_total'], $currency);
             $total_paid = Helper::currency_converter($total_paid, $currency);
 
