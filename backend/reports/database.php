@@ -61,7 +61,9 @@ class Database{
         return $this->wpdb->get_results($sql, ARRAY_A);
     }
 
-    public function get_items_orders_by_ids_product($ids_product, $include_user = false){
+
+    // Get order items by two products ids
+    public function get_items_orders_by_ids_product($id_course, $ids_product, $include_user = false){
         $str_ids = implode(',', $ids_product);
 
         // Include user in the query
@@ -72,8 +74,10 @@ class Database{
             $field_user = "pm1.meta_value AS user_name,pm2.meta_value AS user_lastname,";
             $inner_user = "INNER JOIN {$this->wpdb->prefix}postmeta pm1 ON pm1.post_id = p.ID AND pm1.meta_key = '_billing_first_name'
                            INNER JOIN {$this->wpdb->prefix}postmeta pm2 ON pm2.post_id = p.ID AND pm2.meta_key = '_billing_last_name'";
-            $order_by = "ORDER BY oi.order_id DESC";
+            $order_by = "ORDER BY order_id DESC";
         }
+
+        $query_flexible_product = $this->_query_items_orders_flexible__product($id_course, $field_user, $inner_user);
 
         $sql ="SELECT
                 oi.order_id,
@@ -82,7 +86,8 @@ class Database{
                 oi.order_item_id,
                 deposit_info,
                 item_total,
-                pmc.meta_value currency
+                pmc.meta_value currency,
+                0 flexible
                 FROM {$this->wpdb->prefix}woocommerce_order_items oi
                 INNER JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta oim ON oi.order_item_id = oim.order_item_id
                 LEFT JOIN (
@@ -103,11 +108,46 @@ class Database{
                 AND oi.order_item_type = 'line_item'
                 AND oim.meta_key = '_product_id'
                 AND oim.meta_value IN ({$str_ids})
+
+                UNION
+
+                {$query_flexible_product}
+
                 {$order_by}";
 
         return $this->wpdb->get_results($sql, ARRAY_A);
     }
 
+
+    // Get order items by flexible product price
+    private function _query_items_orders_flexible__product($id_course, $field_user, $inner_user){
+      $sql = "SELECT
+                oi.order_id,
+                {$field_user}
+                p.post_status,
+                oi.order_item_id,
+                null deposit_info,
+                item_total,
+                pmc.meta_value currency,
+                1 flexible
+                FROM {$this->wpdb->prefix}woocommerce_order_items oi
+                INNER JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta oim ON oi.order_item_id = oim.order_item_id
+                INNER JOIN {$this->wpdb->prefix}posts p ON p.ID = oi.order_id
+                INNER JOIN (
+                  SELECT order_item_id, meta_value AS item_total
+                  FROM {$this->wpdb->prefix}woocommerce_order_itemmeta
+                  WHERE meta_key = '_line_total'
+                ) oimt ON oimt.order_item_id = oi.order_item_id
+                INNER JOIN {$this->wpdb->prefix}postmeta pmc ON pmc.post_id = oi.order_id AND pmc.meta_key = '_order_currency'
+                {$inner_user}
+                WHERE
+                  p.post_status IN ('wc-completed','wc-on-hold','wc-partially-paid','wc-processing')
+                  AND order_item_type = 'line_item'
+                  AND oim.meta_key = 'curso_id'
+                  AND oim.meta_value = {$id_course}";
+
+        return $sql;
+    }
 
     public function count_sub_orders_completed($parent_order_id){
         $sql = "SELECT COUNT(ID)

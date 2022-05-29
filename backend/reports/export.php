@@ -33,8 +33,9 @@ class Export{
     public function dcms_export_course(){
         $process = new Process;
         $id_products = explode(',', $_POST['id_products']);
+        $id_course = $_POST['id_course']??0;
 
-        $data = $process->get_detail_course($id_products);
+        $data = $process->get_detail_course($id_course, $id_products);
 
         $this->download_send_headers("course_export_" . date("Y-m-d") . ".csv");
 

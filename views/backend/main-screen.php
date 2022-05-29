@@ -73,7 +73,7 @@ $lms_dashboard_url = admin_url() . '?page=stm-lms-dashboard#/course/';
                 <td>{{ Intl.NumberFormat('en-US').format(item.total_course) }}</td>
                 <td>{{ Intl.NumberFormat('en-US').format(item.total_paid) }}</td>
                 <td>{{ Intl.NumberFormat('en-US').format(item.total_pending) }}</td>
-                <td><a target="_blank" class="button" :href="'<?= $current_url ?>' + '&id_products=' +  item.id_product + '-' + item.id_product2 + '&course_name=' + encodeURIComponent(item.name_course)" >Detalle</a></td>
+                <td><a target="_blank" class="button" :href="'<?= $current_url ?>' + '&id_products=' +  item.id_product + '-' + item.id_product2 + '&course_name=' + encodeURIComponent(item.name_course) + '&id_course=' + item.id_course" >Detalle</a></td>
             </tr>
         </table>
     </div>

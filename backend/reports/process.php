@@ -47,7 +47,7 @@ class Process{
             $id_products[1] = 0;
             if ( $id_product2 > 0 ) $id_products[1] = $id_product2;
 
-            $items_orders = $db->get_items_orders_by_ids_product( $id_products );
+            $items_orders = $db->get_items_orders_by_ids_product($course['id_course'], $id_products );
 
             // Accumulate totals
             $total_course = 0;
@@ -84,9 +84,9 @@ class Process{
     }
 
     // Get detail course
-    public function get_detail_course($id_products){
+    public function get_detail_course($id_course, $id_products){
         $db = new Database;
-        $items_orders = $db->get_items_orders_by_ids_product( $id_products, true );
+        $items_orders = $db->get_items_orders_by_ids_product( $id_course, $id_products, true );
 
         foreach ($items_orders as $key => $item_order) {
             $total_paid = 0;
