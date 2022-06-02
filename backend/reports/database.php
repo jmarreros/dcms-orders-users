@@ -84,24 +84,21 @@ class Database{
                 {$field_user}
                 p.post_status,
                 oi.order_item_id,
-                deposit_info,
-                item_total,
+                oimd.meta_value deposit_info,
+                oimt.meta_value item_total,
                 pmc.meta_value currency,
                 0 flexible
                 FROM {$this->wpdb->prefix}woocommerce_order_items oi
-                INNER JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta oim ON oi.order_item_id = oim.order_item_id
-                LEFT JOIN (
-                    SELECT order_item_id, meta_value AS deposit_info
-                    FROM {$this->wpdb->prefix}woocommerce_order_itemmeta
-                    WHERE meta_key = 'wc_deposit_meta'
-                ) oimd ON oimd.order_item_id = oi.order_item_id
-                INNER JOIN (
-                    SELECT order_item_id, meta_value AS item_total
-                    FROM {$this->wpdb->prefix}woocommerce_order_itemmeta
-                    WHERE meta_key = '_line_total'
-                ) oimt ON oimt.order_item_id = oi.order_item_id
-                INNER JOIN {$this->wpdb->prefix}posts p ON p.ID = oi.order_id
-                INNER JOIN {$this->wpdb->prefix}postmeta pmc ON pmc.post_id = oi.order_id AND pmc.meta_key = '_order_currency'
+                INNER JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta oim
+                    ON oi.order_item_id = oim.order_item_id
+                LEFT JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta oimd
+                    ON oimd.order_item_id = oi.order_item_id AND oimd.meta_key = 'wc_deposit_meta'
+                INNER JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta oimt
+                    ON oimt.order_item_id = oi.order_item_id AND oimt.meta_key = '_line_total'
+                INNER JOIN {$this->wpdb->prefix}posts p
+                    ON p.ID = oi.order_id
+                INNER JOIN {$this->wpdb->prefix}postmeta pmc
+                    ON pmc.post_id = oi.order_id AND pmc.meta_key = '_order_currency'
                 {$inner_user}
                 WHERE
                 p.post_status IN ('wc-completed','wc-on-hold','wc-partially-paid','wc-processing')
@@ -121,23 +118,25 @@ class Database{
 
     // Get order items by flexible product price
     private function _query_items_orders_flexible__product($id_course, $field_user, $inner_user){
+      // Campo deposit_info usado para pasar el valor del curso y la moneda
       $sql = "SELECT
                 oi.order_id,
                 {$field_user}
                 p.post_status,
                 oi.order_item_id,
-                null deposit_info,
-                item_total,
+                CONCAT(oimp.meta_value,'-',oimm.meta_value) deposit_info,
+                oimt.meta_value item_total,
                 pmc.meta_value currency,
                 1 flexible
                 FROM {$this->wpdb->prefix}woocommerce_order_items oi
                 INNER JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta oim ON oi.order_item_id = oim.order_item_id
                 INNER JOIN {$this->wpdb->prefix}posts p ON p.ID = oi.order_id
-                INNER JOIN (
-                  SELECT order_item_id, meta_value AS item_total
-                  FROM {$this->wpdb->prefix}woocommerce_order_itemmeta
-                  WHERE meta_key = '_line_total'
-                ) oimt ON oimt.order_item_id = oi.order_item_id
+                LEFT JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta oimp
+                  ON oimp.order_item_id = oi.order_item_id AND oimp.meta_key = 'curso_precio'
+                LEFT JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta oimm
+                  ON oimm.order_item_id = oi.order_item_id AND oimm.meta_key = 'curso_moneda'
+                INNER JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta oimt
+                  ON oimt.order_item_id = oi.order_item_id AND oimt.meta_key = '_line_total'
                 INNER JOIN {$this->wpdb->prefix}postmeta pmc ON pmc.post_id = oi.order_id AND pmc.meta_key = '_order_currency'
                 {$inner_user}
                 WHERE
@@ -159,6 +158,14 @@ class Database{
         return $this->wpdb->get_var($sql)??0;
     }
 
+    // Get product id from course id
+    public function get_id_product_from_course( $id_course ){
+      $sql = "SELECT meta_value id_product
+              FROM {$this->wpdb->prefix}postmeta
+              WHERE post_id = {$id_course} AND meta_key = 'stm_lms_product_id' LIMIT 1";
+      return $this->wpdb->get_var($sql)??0;
+    }
+
     // Auxiliar function for getting id product form url, por product2
     public function get_product_id_from_url($product_url){
         preg_match('/producto\/(.+)\//', $product_url, $matches);
@@ -174,6 +181,22 @@ class Database{
             return $this->wpdb->get_var($sql)??0;
         }
         return 0;
+    }
+
+
+    // TODO
+    public function get_amount_product_flexible_course_by_user(){
+        $sql = "SELECT p.ID, oimt.meta_value item_total, pmc.meta_value currency, pmu.meta_value user_id
+                FROM wp_woocommerce_order_itemmeta oim
+                INNER JOIN wp_woocommerce_order_items oi ON oi.order_item_id = oim.order_item_id
+                INNER JOIN wp_woocommerce_order_itemmeta oimt ON oimt.order_item_id = oi.order_item_id AND oimt.meta_key = '_line_total'
+                INNER JOIN wp_posts p ON p.ID = oi.order_id
+                INNER JOIN wp_postmeta pmc ON pmc.post_id = oi.order_id AND pmc.meta_key = '_order_currency'
+                INNER JOIN wp_postmeta pmu ON pmu.post_id = oi.order_id AND pmu.meta_key = '_customer_user'
+                WHERE
+                p.post_status IN ('wc-completed','wc-on-hold','wc-partially-paid','wc-processing')
+                AND oim.meta_key = 'curso_id' AND oim.meta_value = 6157
+                AND pmu.meta_value = 7";
     }
 
 }

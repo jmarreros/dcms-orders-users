@@ -62,4 +62,10 @@ class Helper{
     return round($amount/$rate, 2);
   }
 
+  // Multicurrency default
+  public static function get_default_currency(){
+    $data = get_option('woo_multi_currency_params');
+    return $data['currency_default']??'USD';
+  }
+
 }

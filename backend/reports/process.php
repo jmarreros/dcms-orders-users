@@ -110,6 +110,20 @@ class Process{
             $total_item = Helper::currency_converter($item_order['item_total'], $currency);
             $total_paid = Helper::currency_converter($total_paid, $currency);
 
+
+            // Flexible order accummulte totals other orders
+            // if ( $item_order['flexible'] ){
+
+            //   // Course Price
+            //   // $data_course = explode('-', $item_order['deposit_info']);
+            //   // $course_price = floatval($data_course[0]??0);
+            //   // $course_currency = $data_course[0]??'usd';
+
+            //   // $course_price = Helper::currency_converter($course_price, $course_currency);
+
+            // }
+
+
             $items_orders[$key]['item_total'] = $total_item;
             $items_orders[$key]['total_paid'] = $total_paid;
             $items_orders[$key]['total_pending'] = $total_item - $total_paid;
