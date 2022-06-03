@@ -177,20 +177,19 @@ class Database{
     }
 
 
-    // TODO
-    public function get_amount_product_flexible_course_by_user(){
-        $sql = "SELECT p.ID, oimt.meta_value item_total, pmc.meta_value currency, pmu.meta_value user_id
-                FROM wp_woocommerce_order_itemmeta oim
-                INNER JOIN wp_woocommerce_order_items oi ON oi.order_item_id = oim.order_item_id
-                INNER JOIN wp_woocommerce_order_itemmeta oimt ON oimt.order_item_id = oi.order_item_id AND oimt.meta_key = '_line_total'
-                INNER JOIN wp_posts p ON p.ID = oi.order_id
-                INNER JOIN wp_postmeta pmc ON pmc.post_id = oi.order_id AND pmc.meta_key = '_order_currency'
-                INNER JOIN wp_postmeta pmu ON pmu.post_id = oi.order_id AND pmu.meta_key = '_customer_user'
-                WHERE
-                p.post_status IN ('wc-completed','wc-on-hold','wc-partially-paid','wc-processing')
-                AND oim.meta_key = 'curso_id' AND oim.meta_value = 6157
-                AND pmu.meta_value = 7";
-    }
+    // public function get_amount_product_flexible_course_by_user(){
+    //     $sql = "SELECT p.ID, oimt.meta_value item_total, pmc.meta_value currency, pmu.meta_value user_id
+    //             FROM wp_woocommerce_order_itemmeta oim
+    //             INNER JOIN wp_woocommerce_order_items oi ON oi.order_item_id = oim.order_item_id
+    //             INNER JOIN wp_woocommerce_order_itemmeta oimt ON oimt.order_item_id = oi.order_item_id AND oimt.meta_key = '_line_total'
+    //             INNER JOIN wp_posts p ON p.ID = oi.order_id
+    //             INNER JOIN wp_postmeta pmc ON pmc.post_id = oi.order_id AND pmc.meta_key = '_order_currency'
+    //             INNER JOIN wp_postmeta pmu ON pmu.post_id = oi.order_id AND pmu.meta_key = '_customer_user'
+    //             WHERE
+    //             p.post_status IN ('wc-completed','wc-on-hold','wc-partially-paid','wc-processing')
+    //             AND oim.meta_key = 'curso_id' AND oim.meta_value = 6157
+    //             AND pmu.meta_value = 7";
+    // }
 
 }
 

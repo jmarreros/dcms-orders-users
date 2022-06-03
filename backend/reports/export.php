@@ -35,7 +35,18 @@ class Export{
         $id_products = explode(',', $_POST['id_products']);
         $id_course = $_POST['id_course']??0;
 
-        $data = $process->get_detail_course($id_course, $id_products);
+        $details = $process->get_detail_course($id_course, $id_products);
+
+        // clean data to export
+        $data = [];
+        foreach ($details as $key => $row) {
+          $data[$key]['Ordenes'] = $row['order_id'];
+          $data[$key]['Nombres'] = $row['user_name'] . ' ' . $row['user_lastname'];
+          $data[$key]['Total'] = $row['item_total'];
+          $data[$key]['Pagado'] = $row['total_paid'];
+          $data[$key]['Pendiente'] = $row['total_pending'];
+          $data[$key]['Flexible'] = $row['flexible'];
+        }
 
         $this->download_send_headers("course_export_" . date("Y-m-d") . ".csv");
 

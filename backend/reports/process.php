@@ -74,13 +74,17 @@ class Process{
                 }
             }
 
+            // Add Flexible Data
+            $id_course = $course['id_course'];
+            $totals_flexible = $this->_total_flexible_product_data($id_course);
+            $total_course += $totals_flexible['course_price'];
+            $total_paid += $totals_flexible['total_paid'];
+
             // Add to array courses
             $courses[$key]['total_course'] = $total_course;
             $courses[$key]['total_paid'] = $total_paid;
             $courses[$key]['total_pending'] = $total_course - $total_paid;
         }
-
-        // Flexibe price items
 
         return $courses;
     }
@@ -118,7 +122,7 @@ class Process{
         }
 
         // Add flexible data
-        $rows_flexible = $this->flexible_product_data($id_course);
+        $rows_flexible = $this->_flexible_product_data($id_course);
         if ( $rows_flexible ){
           foreach ($rows_flexible as $row) {
             $i = count($items_orders);
@@ -128,19 +132,35 @@ class Process{
             $items_orders[$i]['item_total'] = $row['course_price'];
             $items_orders[$i]['total_paid'] = $row['total_paid'];
             $items_orders[$i]['total_pending'] = $row['course_price'] - $row['total_paid'];
-            $items_orders[$i]['post_status'] = '';
-            $items_orders[$i]['order_item_id'] = '';
-            $items_orders[$i]['deposit_info'] = '';
-            $items_orders[$i]['currency'] = '';
             $items_orders[$i]['flexible'] = 1;
           }
         }
 
+        // Order $items_orders
+        array_multisort(array_column($items_orders, 'user_name'), SORT_ASC, $items_orders);
+
         return $items_orders;
     }
 
+    // For accomulate totals flexible product data
+    private function _total_flexible_product_data($id_course){
+      $rows_flexible = $this->_flexible_product_data($id_course);
+
+      $course_price = 0;
+      $total_paid = 0;
+      if ( $rows_flexible ){
+        foreach ($rows_flexible as $row) {
+          $course_price += $row['course_price'];
+          $total_paid += $row['total_paid'];
+        }
+      }
+
+      return ['course_price' => $course_price,
+              'total_paid' => $total_paid ];
+    }
+
     // Get array data for flexible product
-    private function flexible_product_data($id_course){
+    private function _flexible_product_data($id_course){
         $db = new Database;
         $items = $db->query_items_orders_flexible__product($id_course);
 
@@ -167,7 +187,6 @@ class Process{
         return $data;
     }
 
-
     // Verify if the order has deposit enabled
     private function _has_deposit($deposit_info){
         if ( empty($deposit_info) ) return false;
@@ -177,7 +196,6 @@ class Process{
 
         return $enable === 'yes';
     }
-
 
     // Get total payment by item given count_payments var
     private function _get_paid_deposit_amount($deposit_info, $count_payments){
