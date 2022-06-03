@@ -47,7 +47,7 @@ class Process{
             $id_products[1] = 0;
             if ( $id_product2 > 0 ) $id_products[1] = $id_product2;
 
-            $items_orders = $db->get_items_orders_by_ids_product($course['id_course'], $id_products );
+            $items_orders = $db->get_items_orders_by_ids_product($id_products );
 
             // Accumulate totals
             $total_course = 0;
@@ -80,13 +80,15 @@ class Process{
             $courses[$key]['total_pending'] = $total_course - $total_paid;
         }
 
+        // Flexibe price items
+
         return $courses;
     }
 
     // Get detail course
     public function get_detail_course($id_course, $id_products){
         $db = new Database;
-        $items_orders = $db->get_items_orders_by_ids_product( $id_course, $id_products, true );
+        $items_orders = $db->get_items_orders_by_ids_product($id_products, true );
 
         foreach ($items_orders as $key => $item_order) {
             $total_paid = 0;
@@ -110,27 +112,61 @@ class Process{
             $total_item = Helper::currency_converter($item_order['item_total'], $currency);
             $total_paid = Helper::currency_converter($total_paid, $currency);
 
-
-            // Flexible order accummulte totals other orders
-            // if ( $item_order['flexible'] ){
-
-            //   // Course Price
-            //   // $data_course = explode('-', $item_order['deposit_info']);
-            //   // $course_price = floatval($data_course[0]??0);
-            //   // $course_currency = $data_course[0]??'usd';
-
-            //   // $course_price = Helper::currency_converter($course_price, $course_currency);
-
-            // }
-
-
             $items_orders[$key]['item_total'] = $total_item;
             $items_orders[$key]['total_paid'] = $total_paid;
             $items_orders[$key]['total_pending'] = $total_item - $total_paid;
         }
 
+        // Add flexible data
+        $rows_flexible = $this->flexible_product_data($id_course);
+        if ( $rows_flexible ){
+          foreach ($rows_flexible as $row) {
+            $i = count($items_orders);
+            $items_orders[$i]['order_id'] = $row['orders'];
+            $items_orders[$i]['user_name'] = $row['user_name'];
+            $items_orders[$i]['user_lastname'] = $row['user_lastname'];
+            $items_orders[$i]['item_total'] = $row['course_price'];
+            $items_orders[$i]['total_paid'] = $row['total_paid'];
+            $items_orders[$i]['total_pending'] = $row['course_price'] - $row['total_paid'];
+            $items_orders[$i]['post_status'] = '';
+            $items_orders[$i]['order_item_id'] = '';
+            $items_orders[$i]['deposit_info'] = '';
+            $items_orders[$i]['currency'] = '';
+            $items_orders[$i]['flexible'] = 1;
+          }
+        }
+
         return $items_orders;
     }
+
+    // Get array data for flexible product
+    private function flexible_product_data($id_course){
+        $db = new Database;
+        $items = $db->query_items_orders_flexible__product($id_course);
+
+        $data = [];
+        foreach ($items as $item) {
+
+          $key_in_data = array_search($item['user_id'], array_column($data, 'user_id')); // search user_id in data array
+
+          if ( ! $key_in_data ){
+            $i = count($data);
+            $data[$i]['user_id'] = $item['user_id'];
+            $data[$i]['orders'] = $item['order_id'];
+            $data[$i]['user_name'] = $item['user_name'];
+            $data[$i]['user_lastname'] = $item['user_lastname'];
+            $data[$i]['course_price'] = Helper::currency_converter($item['curso_precio'], $item['curso_moneda'])??0;
+            $data[$i]['total_paid'] = Helper::currency_converter($item['item_total'], $item['currency']);
+          } else {
+            $data[$key_in_data]['orders'] .= "-". $item['order_id'];
+            $data[$key_in_data]['total_paid'] += Helper::currency_converter($item['item_total'], $item['currency']);;
+          }
+
+        }
+
+        return $data;
+    }
+
 
     // Verify if the order has deposit enabled
     private function _has_deposit($deposit_info){

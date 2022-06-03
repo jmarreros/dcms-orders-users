@@ -68,4 +68,19 @@ class Helper{
     return $data['currency_default']??'USD';
   }
 
+  // Generate links orders from str
+  public static function generate_order_links( $order_ids ){
+    $order_url = admin_url() . 'post.php?post=';
+    $ids = explode('-', $order_ids);
+
+    $links = '';
+    foreach ($ids as $id) {
+      $links .= "<a href='".$order_url.$id."&action=edit' target='_blank'>";
+      $links .= $id;
+      $links .= "</a> ";
+    }
+
+    return $links;
+  }
+
 }

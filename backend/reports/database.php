@@ -63,21 +63,17 @@ class Database{
 
 
     // Get order items by two products ids
-    public function get_items_orders_by_ids_product($id_course, $ids_product, $include_user = false){
+    public function get_items_orders_by_ids_product($ids_product, $include_user = false){
         $str_ids = implode(',', $ids_product);
 
         // Include user in the query
         $field_user = '';
         $inner_user = '';
-        $order_by = '';
         if ($include_user){
-            $field_user = "pm1.meta_value AS user_name,pm2.meta_value AS user_lastname,";
-            $inner_user = "INNER JOIN {$this->wpdb->prefix}postmeta pm1 ON pm1.post_id = p.ID AND pm1.meta_key = '_billing_first_name'
-                           INNER JOIN {$this->wpdb->prefix}postmeta pm2 ON pm2.post_id = p.ID AND pm2.meta_key = '_billing_last_name'";
-            $order_by = "ORDER BY order_id DESC";
+            $field_user = "pmn.meta_value AS user_name,pml.meta_value AS user_lastname,";
+            $inner_user = "INNER JOIN {$this->wpdb->prefix}postmeta pmn ON pmn.post_id = p.ID AND pmn.meta_key = '_billing_first_name'
+                           INNER JOIN {$this->wpdb->prefix}postmeta pml ON pml.post_id = p.ID AND pml.meta_key = '_billing_last_name'";
         }
-
-        $query_flexible_product = $this->_query_items_orders_flexible__product($id_course, $field_user, $inner_user);
 
         $sql ="SELECT
                 oi.order_id,
@@ -104,27 +100,21 @@ class Database{
                 p.post_status IN ('wc-completed','wc-on-hold','wc-partially-paid','wc-processing')
                 AND oi.order_item_type = 'line_item'
                 AND oim.meta_key = '_product_id'
-                AND oim.meta_value IN ({$str_ids})
-
-                UNION
-
-                {$query_flexible_product}
-
-                {$order_by}";
+                AND oim.meta_value IN ({$str_ids})";
 
         return $this->wpdb->get_results($sql, ARRAY_A);
     }
 
 
     // Get order items by flexible product price
-    private function _query_items_orders_flexible__product($id_course, $field_user, $inner_user){
-      // Campo deposit_info usado para pasar el valor del curso y la moneda
+    public function query_items_orders_flexible__product($id_course){
       $sql = "SELECT
                 oi.order_id,
-                {$field_user}
-                p.post_status,
-                oi.order_item_id,
-                CONCAT(oimp.meta_value,'-',oimm.meta_value) deposit_info,
+                pmid.meta_value user_id,
+                pmn.meta_value user_name,
+                pml.meta_value user_lastname,
+                oimp.meta_value curso_precio,
+                oimm.meta_value curso_moneda,
                 oimt.meta_value item_total,
                 pmc.meta_value currency,
                 1 flexible
@@ -138,14 +128,17 @@ class Database{
                 INNER JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta oimt
                   ON oimt.order_item_id = oi.order_item_id AND oimt.meta_key = '_line_total'
                 INNER JOIN {$this->wpdb->prefix}postmeta pmc ON pmc.post_id = oi.order_id AND pmc.meta_key = '_order_currency'
-                {$inner_user}
+                INNER JOIN {$this->wpdb->prefix}postmeta pmn ON pmn.post_id = p.ID AND pmn.meta_key = '_billing_first_name'
+                INNER JOIN {$this->wpdb->prefix}postmeta pml ON pml.post_id = p.ID AND pml.meta_key = '_billing_last_name'
+                INNER JOIN {$this->wpdb->prefix}postmeta pmid ON pmid.post_id = p.ID AND pmid.meta_key = '_customer_user'
                 WHERE
                   p.post_status IN ('wc-completed','wc-on-hold','wc-partially-paid','wc-processing')
                   AND order_item_type = 'line_item'
                   AND oim.meta_key = 'curso_id'
-                  AND oim.meta_value = {$id_course}";
+                  AND oim.meta_value = {$id_course}
+                ORDER BY user_name, user_lastname, user_id, order_id";
 
-        return $sql;
+        return $this->wpdb->get_results($sql, ARRAY_A);
     }
 
     public function count_sub_orders_completed($parent_order_id){

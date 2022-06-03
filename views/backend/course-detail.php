@@ -3,10 +3,10 @@
 // $id_products
 // $id_course
 
+use dcms\orders\helpers\Helper;
+
 defined( 'ABSPATH' ) || exit;
 $return_url = admin_url() . DCMS_ORDERS_SUBMENU . '?page='. DCMS_ORDERS_MAINPAGE;
-$order_url = admin_url() . 'post.php?post=';
-
 $item_total = 0;
 $total_paid = 0;
 $total_pending = 0;
@@ -49,11 +49,7 @@ $total_pending = 0;
                 <tr>
                     <td><?= $item['user_name'] . ' ' . $item['user_lastname'] ?></td>
                     <td>
-                    <?php
-                        echo "<a href='".$order_url.$item['order_id']."&action=edit' target='_blank'>";
-                        echo $item['order_id'];
-                        echo "</a>";
-                    ?>
+                    <?= Helper::generate_order_links( $item['order_id'] ); ?>
                     </td>
                     <td><?= number_format($item['item_total'], 2) ?></td>
                     <td><?= number_format($item['total_paid'], 2) ?></td>
