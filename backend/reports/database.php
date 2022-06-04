@@ -56,6 +56,7 @@ class Database{
             $sql .= " AND p.post_title like '%{$tcourse}%'";
         }
 
+        $sql .= " AND p.post_title NOT LIKE 'Módulo%'"; //Module restriction parent course
         $sql .=" ORDER BY p.post_date DESC";
 
         return $this->wpdb->get_results($sql, ARRAY_A);

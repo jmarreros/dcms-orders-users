@@ -14,7 +14,6 @@ class Database{
         $this->table_post   = $this->wpdb->prefix.'posts';
     }
 
-
     // Validate if an order has partial payments enable
     public function order_has_deposits($id_order):bool{
         $sql = "SELECT COUNT(ID) FROM {$this->table_post}
