@@ -40,6 +40,8 @@ class Database{
         WHERE p.post_type = 'stm-courses'
         AND p.post_status = 'publish'";
 
+        $sql .= " AND p.post_parent = 0"; //Module restriction parent course
+
         if ( ! empty($dstart) && empty($dend)){
             $sql .= " AND p.post_date >= '{$dstart}'";
         }
@@ -56,7 +58,6 @@ class Database{
             $sql .= " AND p.post_title like '%{$tcourse}%'";
         }
 
-        $sql .= " AND p.post_title NOT LIKE 'Módulo%'"; //Module restriction parent course
         $sql .=" ORDER BY p.post_date DESC";
 
         return $this->wpdb->get_results($sql, ARRAY_A);

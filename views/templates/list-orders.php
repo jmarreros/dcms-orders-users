@@ -8,6 +8,11 @@
 defined( 'ABSPATH' ) || exit;
 
 ?>
+<section class="flexible-payment">
+  <a href="/producto/pago-flexible/" class="button" target="_blank">
+    Pagos Flexibles
+  </a>
+</section>
 <div id="orders-user">
 
     <div style="overflow-x: auto;">
@@ -17,6 +22,7 @@ defined( 'ABSPATH' ) || exit;
                 <th>Fecha</th>
                 <th>Estado</th>
                 <th>Depósito</th>
+                <th>Flexible</th>
                 <th>Pendiente</th>
                 <th>Total</th>
                 <th>Acciones</th>
@@ -26,6 +32,7 @@ defined( 'ABSPATH' ) || exit;
                 <td>{{ item.date }}</td>
                 <td>{{ item.status }}</td>
                 <td>{{ item.deposit ? 'Si' : 'No' }}</td>
+                <td>{{ item.is_flexible ? 'Si' : 'No' }}</td>
                 <td v-html="item.pending"></td>
                 <td v-html="item.total"></td>
                 <td>

@@ -38,16 +38,20 @@ class Orders{
         $db = new Database();
         $items = $this->get_object_orders($page);
 
+        // error_log(print_r($items->orders,true));
+
         $data = [];
         foreach ($items->orders as $key => $item) {
             $order_id = $item->get_id();
 
+            $currency = $item->get_currency();
+
             $data[$key]['id'] = $order_id;
             $data[$key]['status'] = wc_get_order_status_name( $item->get_status() );
             $data[$key]['date'] = wc_format_datetime( $item->get_date_created() );
-            $data[$key]['total'] = wc_price($item->get_total());
+            $data[$key]['total'] = $currency.' '.$item->get_total();
             $data[$key]['deposit'] = $db->order_has_deposits($order_id);
-            $data[$key]['pending'] = wc_price($db->get_total_payment_pending($order_id));
+            $data[$key]['pending'] = $currency.' '.$db->get_total_payment_pending($order_id);
             $data[$key]['payment_url'] = '';
 
             // Conditional for showing payment link
@@ -59,7 +63,16 @@ class Orders{
                     $data[$key]['payment_url'] = $url_payment;
                 }
             }
-        }
+
+            // For showing flexible data
+            $flexible_data = $db->order_flexible_payment($order_id);
+            $data[$key]['is_flexible'] = false;
+            if ( $flexible_data ){
+              $data[$key]['is_flexible'] = true;
+              $data[$key]['pending'] = $flexible_data->course_price - Helper::currency_converter($item->get_total(), $currency);
+              $data[$key]['pending'] = Helper::get_default_currency() . ' ' . $data[$key]['pending'];
+            }
+          }
 
         $res = [
             'status' => 1,

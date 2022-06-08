@@ -24,7 +24,8 @@ class Database{
 
     // Get parameters url payment for the next partial payment
     public function data_partial_payment($id_order){
-        $sql = "SELECT ID, post_password AS key_url FROM {$this->table_post}
+        $sql = "SELECT ID, post_password AS key_url
+                FROM {$this->table_post}
                 WHERE post_parent = {$id_order}
                         AND post_type = 'wcdp_payment'
                         AND post_status = 'wc-pending'
@@ -55,9 +56,34 @@ class Database{
     }
 
 
+    // Verify if a order has flexible price product
+    public function order_flexible_payment($order_id){
+      if ( ! defined(DCMS_PARENT_ID_PRODUCT_MULTI_PRICES) ) {
+        define(DCMS_PARENT_ID_PRODUCT_MULTI_PRICES, 'dcms-parent-product-multi-prices');
+      }
+
+      $id_product = get_option(DCMS_PARENT_ID_PRODUCT_MULTI_PRICES);
+
+      $sql = "SELECT
+              oi.order_id,
+              oimc.meta_value AS course_id,
+              oimcp.meta_value AS course_price,
+              oimcm.meta_value AS course_currency
+              FROM {$this->wpdb->prefix}woocommerce_order_itemmeta oim
+              INNER JOIN {$this->wpdb->prefix}woocommerce_order_items oi ON oim.order_item_id = oi.order_item_id
+              INNER JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta oimc ON oimc.order_item_id = oi.order_item_id AND oimc.meta_key = 'curso_id'
+              INNER JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta oimcp ON oimcp.order_item_id = oi.order_item_id AND oimcp.meta_key = 'curso_precio'
+              INNER JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta oimcm ON oimcm.order_item_id = oi.order_item_id AND oimcm.meta_key = 'curso_moneda'
+              WHERE oim.meta_key = '_product_id'
+              AND oim.meta_value = {$id_product}
+              AND oi.order_id = {$order_id}";
+
+      return $this->wpdb->get_row($sql);
+
+      //TODO
+      // Verificar todos los pagos flexibles que tiene un usuario
+      // por curso y acumulado para ver el pendiente de pago flexible
+    }
+
 }
 
-
-// $status = $order->get_status();
-//if ( $status == 'pending' ) { //|| $status == 'on-hold'
-//}

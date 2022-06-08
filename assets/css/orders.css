@@ -28,6 +28,20 @@
     margin:20px 0;
 }
 
+/* orders screen */
+.flexible-payment{
+  text-align: right;
+  margin-bottom: 20px;
+}
+
+.multiseparator{
+  display: none;
+}
+
+.stm_lms_user_info_top{
+  margin-bottom: 0;
+}
+
 #orders-user .container-actions .button{
   margin: 4px;
   padding: 2px;
