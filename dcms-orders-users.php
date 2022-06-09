@@ -43,6 +43,9 @@ final class Loader{
 		define ('DCMS_ORDERS_DETAILPAGE', 'detail-orders');
 		define ('DCMS_ORDERS_KEY_META', '_uploaded_files');
 		define ('DCMS_UPLOAD_FOLDER', 'uploads/archivos-subidos/'); // inside wp-content folder
+    if ( ! defined('DCMS_PARENT_ID_PRODUCT_MULTI_PRICES') ) {
+      define('DCMS_PARENT_ID_PRODUCT_MULTI_PRICES', 'dcms-parent-product-multi-prices');
+    }
 	}
 
 	// Load all the files we need

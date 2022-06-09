@@ -58,10 +58,6 @@ class Database{
 
     // Verify if a order has flexible price product
     public function order_flexible_payment($order_id){
-      if ( ! defined(DCMS_PARENT_ID_PRODUCT_MULTI_PRICES) ) {
-        define(DCMS_PARENT_ID_PRODUCT_MULTI_PRICES, 'dcms-parent-product-multi-prices');
-      }
-
       $id_product = get_option(DCMS_PARENT_ID_PRODUCT_MULTI_PRICES);
 
       $sql = "SELECT
@@ -79,11 +75,33 @@ class Database{
               AND oi.order_id = {$order_id}";
 
       return $this->wpdb->get_row($sql);
-
-      //TODO
-      // Verificar todos los pagos flexibles que tiene un usuario
-      // por curso y acumulado para ver el pendiente de pago flexible
     }
 
+
+    // Get all flexible payments by user and course, for calcultate pending
+    public function order_flexible_payment_user_course($user_id, $course_id){
+      $id_product = get_option(DCMS_PARENT_ID_PRODUCT_MULTI_PRICES);
+
+      $sql = "SELECT
+              oi.order_id,
+              oimt.meta_value total,
+              pmc.meta_value currency
+              FROM {$this->wpdb->prefix}woocommerce_order_itemmeta oim
+              INNER JOIN {$this->wpdb->prefix}woocommerce_order_items oi ON oim.order_item_id = oi.order_item_id
+              INNER JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta oimc ON oimc.order_item_id = oi.order_item_id AND oimc.meta_key = 'curso_id'
+              INNER JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta oimt ON oimt.order_item_id = oi.order_item_id AND oimt.meta_key = '_line_total'
+              INNER JOIN {$this->wpdb->prefix}postmeta pm ON pm.post_id = oi.order_id AND pm.meta_key = '_customer_user'
+              INNER JOIN {$this->wpdb->prefix}postmeta pmc ON pmc.post_id = oi.order_id AND pmc.meta_key = '_order_currency'
+              INNER JOIN {$this->wpdb->prefix}posts p ON pm.post_id = p.ID
+              WHERE oim.meta_key = '_product_id'
+              AND oim.meta_value = {$id_product}
+              AND oimc.meta_value = {$course_id}
+              AND pm.meta_value = {$user_id}
+              AND p.post_status IN ('wc-completed','wc-on-hold','wc-partially-paid','wc-processing')
+              ORDER BY oi.order_id DESC";
+
+      return $this->wpdb->get_results($sql);
+
+    }
 }
 

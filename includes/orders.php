@@ -69,8 +69,22 @@ class Orders{
             $data[$key]['is_flexible'] = false;
             if ( $flexible_data ){
               $data[$key]['is_flexible'] = true;
-              $data[$key]['pending'] = $flexible_data->course_price - Helper::currency_converter($item->get_total(), $currency);
+
+              $course_id = $flexible_data->course_id;
+              $course_price = $flexible_data->course_price;
+              $course_currency = $flexible_data->course_currency;
+              $user_id = get_current_user_id();
+
+              $result = $db->order_flexible_payment_user_course($user_id, $course_id);
+
+              $amount = 0;
+              foreach ($result as $item) {
+                $amount += Helper::currency_converter($item->total, $item->currency);
+              }
+
+              $data[$key]['pending'] = Helper::currency_converter($course_price, $course_currency) - $amount;
               $data[$key]['pending'] = Helper::get_default_currency() . ' ' . $data[$key]['pending'];
+
             }
           }
 
