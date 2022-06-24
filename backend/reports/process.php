@@ -123,6 +123,7 @@ class Process{
 
         // Add flexible data
         $rows_flexible = $this->_flexible_product_data($id_course);
+
         if ( $rows_flexible ){
           foreach ($rows_flexible as $row) {
             $i = count($items_orders);
@@ -169,7 +170,7 @@ class Process{
 
           $key_in_data = array_search($item['user_id'], array_column($data, 'user_id')); // search user_id in data array
 
-          if ( ! $key_in_data ){
+          if ( $key_in_data === false ){
             $i = count($data);
             $data[$i]['user_id'] = $item['user_id'];
             $data[$i]['orders'] = $item['order_id'];
