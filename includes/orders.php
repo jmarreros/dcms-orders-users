@@ -1,5 +1,7 @@
 <?php
 
+// For manage by-orders shorcode and template
+
 namespace dcms\orders\includes;
 
 use dcms\orders\includes\Database;

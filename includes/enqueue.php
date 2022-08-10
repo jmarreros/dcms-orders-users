@@ -19,6 +19,12 @@ class Enqueue{
                 DCMS_ORDERS_VERSION,
                 true);
 
+        wp_register_script('dcms-courses-orders-script',
+                DCMS_ORDERS_URL.'assets/js/courses.js',
+                ['vue.js','jquery'],
+                DCMS_ORDERS_VERSION,
+                true);
+
         // Attachments
         wp_register_script('dcms-attachment-script',
                 DCMS_ORDERS_URL.'assets/js/attachment.js',
@@ -33,18 +39,30 @@ class Enqueue{
                 DCMS_ORDERS_VERSION );
     }
 
-    public static function enqueue_style(){
-        wp_enqueue_style('dcms-orders-style');
-    }
 
-    // Enqueue script orders
+    // by-orders, Enqueue script orders
     public static function enqueue_scripts_orders(){
         wp_enqueue_script('dcms-orders-script');
 
         wp_localize_script('dcms-orders-script',
                             'dcmsOrders',
                             [ 'ajaxurl'=>admin_url('admin-ajax.php'),
-                                'nonce' => wp_create_nonce('ajax-nonce-orders')]);
+                            'nonce' => wp_create_nonce('ajax-nonce-orders')]);
+    }
+
+    // by-courses, Enqueue script courses orders
+    public static function enqueue_scripts_courses_orders(){
+        wp_enqueue_script('dcms-courses-orders-script');
+
+        wp_localize_script('dcms-courses-orders-script',
+                            'dcmsCoursesOrders',
+                            [ 'ajaxurl'=>admin_url('admin-ajax.php'),
+                            'nonce' => wp_create_nonce('ajax-nonce-courses-orders')]);
+    }
+
+    // Enqueue style.css
+    public static function enqueue_style(){
+        wp_enqueue_style('dcms-orders-style');
     }
 
     // Enqueue script attachments

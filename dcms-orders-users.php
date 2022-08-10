@@ -19,6 +19,7 @@ use dcms\orders\includes\Enqueue;
 use dcms\orders\includes\Submenu;
 use dcms\orders\includes\Shortcode;
 use dcms\orders\includes\Orders;
+use dcms\orders\includes\Courses;
 use dcms\orders\includes\Attachment;
 use dcms\orders\reports\Process;
 use dcms\orders\reports\Export;
@@ -55,6 +56,7 @@ final class Loader{
 		include_once ( DCMS_ORDERS_PATH . '/includes/submenu.php');
 		include_once ( DCMS_ORDERS_PATH . '/includes/shortcode.php');
 		include_once ( DCMS_ORDERS_PATH . '/includes/orders.php');
+		include_once ( DCMS_ORDERS_PATH . '/includes/courses.php');
 		include_once ( DCMS_ORDERS_PATH . '/includes/database.php');
 		include_once ( DCMS_ORDERS_PATH . '/includes/enqueue.php');
 		include_once ( DCMS_ORDERS_PATH . '/includes/attachment.php');
@@ -91,11 +93,11 @@ final class Loader{
 		new SubMenu;
 		new Shortcode;
 		new Orders;
+		new Courses;
 		new Attachment;
 		new Process;
 		new Export;
 	}
-
 }
 
 $dcms_orders_process = new Loader;

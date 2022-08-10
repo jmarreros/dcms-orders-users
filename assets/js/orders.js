@@ -1,3 +1,5 @@
+// For manage by-orders view
+
 var j = jQuery.noConflict();
 
 var vmorders = new Vue({

@@ -103,5 +103,34 @@ class Database{
       return $this->wpdb->get_results($sql);
 
     }
+
+
+    // Get all user orders by course
+    public function get_courses_order_user($user_id){
+        $id_product = get_option(DCMS_PARENT_ID_PRODUCT_MULTI_PRICES);
+
+        // Get flexible product name
+        $sql = "SELECT post_title FROM {$this->wpdb->posts} WHERE id = {$id_product}";
+        $flexible_product_name = $this->wpdb->get_var($sql);
+
+        // Rehusable subquery
+        $sql_subquery = "SELECT ID FROM {$this->wpdb->prefix}posts p 
+                        INNER JOIN {$this->wpdb->prefix}postmeta pm ON p.ID = pm.post_id
+                        WHERE p.post_type = 'shop_order' AND pm.meta_key = '_customer_user' AND pm.meta_value = {$user_id}";
+
+        $sql = "SELECT oi.order_id, oi.order_item_id, oi.order_item_name course_name 
+                FROM {$this->wpdb->prefix}woocommerce_order_items oi
+                INNER JOIN ({$sql_subquery}) o ON o.ID = oi.order_id
+                WHERE order_item_name != '{$flexible_product_name}'
+                UNION
+                SELECT oi.order_id, oi.order_item_id, oim.meta_value course_name  
+                FROM {$this->wpdb->prefix}woocommerce_order_items oi
+                INNER JOIN ({$sql_subquery}) o ON o.ID = oi.order_id
+                INNER JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta oim
+                ON oi.order_item_id = oim.order_item_id
+                WHERE oi.order_item_name = '{$flexible_product_name}' AND meta_key = 'curso_nombre'";
+
+        return $this->wpdb->get_results($sql);
+    }
 }
 
