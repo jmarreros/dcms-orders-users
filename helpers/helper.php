@@ -33,7 +33,7 @@ class Helper{
 
         return $order;
     }
-
+    
 
     // Return wp_cpontente folder absolute path
     public static function path_content_folder($create_folder = false){

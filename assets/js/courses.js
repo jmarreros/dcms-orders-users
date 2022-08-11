@@ -10,9 +10,12 @@ var vmcourses= new Vue({
         loading: true,
     },
     created: function(){
-            this.loadData()
+        // this.loadData()
     },
     methods: {
+        reloadButton(){
+            this.loadData()
+        },
         loadData() {
             this.loading = true
             j.ajax({

@@ -128,9 +128,30 @@ class Database{
                 INNER JOIN ({$sql_subquery}) o ON o.ID = oi.order_id
                 INNER JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta oim
                 ON oi.order_item_id = oim.order_item_id
-                WHERE oi.order_item_name = '{$flexible_product_name}' AND meta_key = 'curso_nombre'";
+                WHERE oi.order_item_name = '{$flexible_product_name}' AND meta_key = 'curso_nombre'
+                ORDER BY order_id DESC";
 
         return $this->wpdb->get_results($sql);
     }
+
+    // Get order status and currency
+    public function get_basic_order_info($order_id){
+        $sql = "SELECT p.post_status, meta_value order_currency  
+                FROM {$this->wpdb->prefix}posts p
+                INNER JOIN {$this->wpdb->prefix}postmeta pm 
+                ON p.ID = pm.post_id
+                WHERE p.ID = {$order_id} AND pm.meta_key = '_order_currency'";
+        
+        return $this->wpdb->get_row($sql, ARRAY_A);
+    }
+
+    // Get item order total and product id
+    public function get_basic_item_order_info($item_order_id){
+        $sql = "SELECT meta_key, meta_value 
+                FROM {$this->wpdb->prefix}woocommerce_order_itemmeta 
+                WHERE order_item_id = {$item_order_id} AND ( meta_key = '_line_total' OR  meta_key = '_product_id' )";
+        return $this->wpdb->get_results($sql, ARRAY_A);
+    }
+
 }
 

@@ -15,6 +15,10 @@ defined( 'ABSPATH' ) || exit;
 </section>
 <div id="courses-orders">
 
+    <input id="reloadButton" v-on:click="reloadButton" class="button2" type="button" value="recargar">
+
+    <br>
+
     <div style="overflow-x: auto;">
         <table id="list-orders">
             <tr>
