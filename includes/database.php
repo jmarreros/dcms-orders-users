@@ -118,12 +118,12 @@ class Database{
                         INNER JOIN {$this->wpdb->prefix}postmeta pm ON p.ID = pm.post_id
                         WHERE p.post_type = 'shop_order' AND pm.meta_key = '_customer_user' AND pm.meta_value = {$user_id}";
 
-        $sql = "SELECT oi.order_id, oi.order_item_id, oi.order_item_name course_name 
+        $sql = "SELECT oi.order_id, oi.order_item_id, oi.order_item_name course_name, 0 flexible 
                 FROM {$this->wpdb->prefix}woocommerce_order_items oi
                 INNER JOIN ({$sql_subquery}) o ON o.ID = oi.order_id
                 WHERE order_item_name != '{$flexible_product_name}'
                 UNION
-                SELECT oi.order_id, oi.order_item_id, oim.meta_value course_name  
+                SELECT oi.order_id, oi.order_item_id, oim.meta_value course_name, 1 flexible
                 FROM {$this->wpdb->prefix}woocommerce_order_items oi
                 INNER JOIN ({$sql_subquery}) o ON o.ID = oi.order_id
                 INNER JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta oim
