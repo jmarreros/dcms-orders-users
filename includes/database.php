@@ -5,18 +5,15 @@ namespace dcms\orders\includes;
 class Database{
 
     private $wpdb;
-    private $table_post;
 
     public function __construct(){
         global $wpdb;
-
         $this->wpdb = $wpdb;
-        $this->table_post   = $this->wpdb->prefix.'posts';
     }
 
     // Validate if an order has partial payments enable
     public function order_has_deposits($id_order):bool{
-        $sql = "SELECT COUNT(ID) FROM {$this->table_post}
+        $sql = "SELECT COUNT(ID) FROM {$this->wpdb->prefix}posts
                 WHERE post_parent = {$id_order} AND post_type = 'wcdp_payment'";
 
         return boolval( $this->wpdb->get_var($sql) );
@@ -33,7 +30,7 @@ class Database{
     // Get parameters url payment for the next partial payment
     public function data_partial_payment($id_order){
         $sql = "SELECT ID, post_password AS key_url
-                FROM {$this->table_post}
+                FROM {$this->wpdb->prefix}posts
                 WHERE post_parent = {$id_order}
                         AND post_type = 'wcdp_payment'
                         AND post_status = 'wc-pending'
@@ -157,8 +154,23 @@ class Database{
     public function get_basic_item_order_info($item_order_id){
         $sql = "SELECT meta_key, meta_value 
                 FROM {$this->wpdb->prefix}woocommerce_order_itemmeta 
-                WHERE order_item_id = {$item_order_id} AND ( meta_key = '_line_total' OR  meta_key = '_product_id' )";
-                
+                WHERE order_item_id = {$item_order_id} 
+                        AND ( meta_key = '_line_total' OR  meta_key = '_product_id' )";
+
+        return $this->wpdb->get_results($sql, ARRAY_A);
+    }
+
+    // Get metadata flexible item order
+    public function get_flexible_item_order_info($item_order_id){
+        $sql = "SELECT meta_key, meta_value 
+                FROM {$this->wpdb->prefix}woocommerce_order_itemmeta 
+                WHERE order_item_id = {$item_order_id} 
+                     AND ( meta_key = '_line_total' 
+                            OR meta_key = '_product_id' 
+                            OR meta_key = 'curso_id'
+                            OR meta_key = 'curso_precio' 
+                            OR meta_key = 'curso_moneda')";
+
         return $this->wpdb->get_results($sql, ARRAY_A);
     }
 

@@ -34,34 +34,48 @@ class Courses{
                         ];
         }
 
-        // Add additional data to data_courses
+        //  Add additional data by type item
         foreach ($data_courses as $name_course => $data_course) {
+            
+            // Add additional data info_item_order to data_courses
             foreach ($data_course as $order => $data_order) {
                 
                 if ( ! $data_order['flexible'] && ! $data_order['has_deposits']){ // normal order
-                    
                     $info_item_order = $this->get_normal_info_item_order($order, $data_order['item']);
                     $data_courses[$name_course][$order]['info_item_order'] = $info_item_order;
 
                 } elseif( $data_order['flexible'] ){ // flexible order
-                    
-                } elseif ( $data_order['has_deposits'] ){ // deposit order
+                    $info_item_order = $this->get_flexible_info_item_order($order, $data_order['item']);
+                    $data_courses[$name_course][$order]['info_item_order'] = $info_item_order;
 
+                } elseif ( $data_order['has_deposits'] ){ // deposit order
                     $info_item_order = $this->get_deposit_info_item_order($order, $data_order['item']);
                     $data_courses[$name_course][$order]['info_item_order'] = $info_item_order;                    
                 }
             }
+
+            // Adding pending to items_flexible by course
+            $items_flexible = array_filter($data_course, fn($data_order) => $data_order['flexible'] == 1);
+
+            if ( $items_flexible ) {
+                error_log(print_r($items_flexible, true));
+            }
+
+
+            // // Accumulate pending pay for flexible items orders by course
+            // foreach ($data_course as $order => $data_order) {
+
+            //     if ( $data_order['flexible']  ){
+
+                    
+            //         $data_courses[$name_course][$order]['info_item_order']['pending'] = 10;
+            //     }
+            // }
         }
 
+        
+
         error_log(print_r($data_courses, true));
-
-        // $this->get_info_item_order(33734, 913);
-
-
-        // TODO
-        // Para detectar el pendiente de pago en una orden con depósitos, revisar las órdenes hijas si estan pagadas
-        // y haciendo correspondencia con el campo wc_deposit_meta de la tabla wp_woocommerce_order_itemmeta
-
 
         $res = [
             'status' => 1,
@@ -80,6 +94,20 @@ class Courses{
 
         // Add data to $info var
         foreach ($item_order_info as $metadata) {
+            $info[$metadata['meta_key']] = $metadata['meta_value'];
+        }
+
+        return $info;
+    }
+
+    // Get info item order for a product with flexible price
+    private function get_flexible_info_item_order($order_id, $item_order_id){
+        $db = new Database();
+        $info = $db->get_basic_order_info($order_id);
+        $item_order_flexible_info = $db->get_flexible_item_order_info($item_order_id);
+
+        // Add data to $info var
+        foreach ($item_order_flexible_info as $metadata) {
             $info[$metadata['meta_key']] = $metadata['meta_value'];
         }
 
@@ -132,5 +160,5 @@ class Courses{
         return $info_deposit;
     }
 
-
+    
 }
