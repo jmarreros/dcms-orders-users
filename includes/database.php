@@ -22,6 +22,14 @@ class Database{
         return boolval( $this->wpdb->get_var($sql) );
     }
 
+    // Return item order deposit meta
+    public function item_order_deposit_meta($id_item_order){
+        $sql = "SELECT meta_value FROM {$this->wpdb->prefix}woocommerce_order_itemmeta 
+                WHERE order_item_id = {$id_item_order} AND meta_key = 'wc_deposit_meta'";
+        
+        return maybe_unserialize($this->wpdb->get_var($sql));
+    }
+
     // Get parameters url payment for the next partial payment
     public function data_partial_payment($id_order){
         $sql = "SELECT ID, post_password AS key_url
@@ -150,8 +158,17 @@ class Database{
         $sql = "SELECT meta_key, meta_value 
                 FROM {$this->wpdb->prefix}woocommerce_order_itemmeta 
                 WHERE order_item_id = {$item_order_id} AND ( meta_key = '_line_total' OR  meta_key = '_product_id' )";
+                
         return $this->wpdb->get_results($sql, ARRAY_A);
     }
 
+    // Get status sub orders for deposit verification
+    public function get_status_child_orders($order_id){
+        $sql = "SELECT post_status FROM {$this->wpdb->prefix}posts 
+                WHERE post_parent = {$order_id}
+                ORDER BY ID";
+
+        return $this->wpdb->get_col($sql);
+    }
 }
 

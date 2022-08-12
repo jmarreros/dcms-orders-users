@@ -40,14 +40,15 @@ class Courses{
                 
                 if ( ! $data_order['flexible'] && ! $data_order['has_deposits']){ // normal order
                     
-                    $info_item_order = $this->get_info_item_order($order, $data_courses[$name_course][$order]['item']);
+                    $info_item_order = $this->get_normal_info_item_order($order, $data_order['item']);
                     $data_courses[$name_course][$order]['info_item_order'] = $info_item_order;
 
                 } elseif( $data_order['flexible'] ){ // flexible order
                     
-
                 } elseif ( $data_order['has_deposits'] ){ // deposit order
-                    
+
+                    $info_item_order = $this->get_deposit_info_item_order($order, $data_order['item']);
+                    $data_courses[$name_course][$order]['info_item_order'] = $info_item_order;                    
                 }
             }
         }
@@ -71,8 +72,8 @@ class Courses{
     }
 
 
-    // Get basic info for an item order
-    private function get_info_item_order($order_id, $item_order_id){
+    // Get basic info for an item standard order
+    private function get_normal_info_item_order($order_id, $item_order_id){
         $db = new Database();
         $info = $db->get_basic_order_info($order_id);
         $item_order_info = $db->get_basic_item_order_info($item_order_id);
@@ -84,5 +85,52 @@ class Courses{
 
         return $info;
     }
+
+    // Get basic info for a item deposit order
+    private function get_deposit_info_item_order($order_id, $item_order_id){
+        $db = new Database();
+        $desposit_meta = $db->item_order_deposit_meta($item_order_id);
+        $info = $this->get_normal_info_item_order($order_id, $item_order_id);
+
+        // Validate if item has deposit
+        if (! $desposit_meta || ($desposit_meta['enable']??'no') === 'no'  ){
+            return $info;
+        }
+
+        $info_deposit = $this->get_payments_deposit($desposit_meta, $order_id);
+        $info['total_deposit'] = $info_deposit['total'];
+        $info['pending_deposit'] = $info_deposit['pending'];
+
+        return $info;
+    }
+
+    // Get current payments for every desposit
+    private function get_payments_deposit($deposit_meta, $order_id){
+        $db = new Database();        
+        $status_orders = $db->get_status_child_orders($order_id);
+
+        // Get payments deposit
+        $payments = [];
+        $payments[] = $deposit_meta['deposit']; // first payment
+        foreach ($deposit_meta['payment_schedule'] as $item) {
+            $payments[] = $item['amount'];
+        }
+
+        // Detect pending
+        $states = ['wc-completed','wc-on-hold'];
+        $total_pay = 0;
+        foreach ($payments as $key => $payment) {
+            if ( in_array( $status_orders[$key], $states ) ){
+                $total_pay += $payment;
+            }
+        }
+
+        $info_deposit = [];
+        $info_deposit['total'] = $deposit_meta['total'];
+        $info_deposit['pending'] = $info_deposit['total'] - $total_pay;
+
+        return $info_deposit;
+    }
+
 
 }
