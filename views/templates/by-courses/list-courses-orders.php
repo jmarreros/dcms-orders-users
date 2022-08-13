@@ -15,23 +15,33 @@ defined( 'ABSPATH' ) || exit;
 </section>
 <div id="courses-orders">
 
-    <input id="reloadButton" v-on:click="reloadButton" class="button2" type="button" value="recargar">
+    <input id="reloadButton" v-on:click="reloadButton" class="button" type="button" value="recargar">
 
     <br>
 
-    <div style="overflow-x: auto;">
-        <table id="list-orders">
-            <tr>
-                <th>Nombre Curso</th>
-                <th>Pendiente</th>
-                <th>Total</th>
-            </tr>
-            <tr v-for="item in results" :key="item.id">
-                <td>Curso1</td>
-                <td>100</td>
-                <td>100</td>
-            </tr>
-        </table>
+    <div>
+        <ul id="list-courses">
+            <li v-for="(item, course, index) in results" :key="index">
+
+                <div class="course-name">{{ course }}</div>
+                <table class="course-detail" style="overflow-x: auto;">
+                    <tr>
+                        <th>Orden</th>
+                        <th>Estado</th>
+                        <th>Pendiente</th>
+                        <th>Pagado</th>
+                        <th>Acciones</th>
+                    </tr>
+                    <tr v-for="(detail, order) of item">
+                        <td>{{ order }}</td>
+                        <td>{{ detail.info_item_order.post_status }}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </li>
+        </ul>
     </div>
 
     <section class="footer-container">

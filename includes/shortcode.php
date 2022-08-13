@@ -15,7 +15,7 @@ Class Shortcode{
 
     public function register_shortcode_orders_user(){
         add_shortcode('dcms_courses_orders_user', [$this, 'create_courses_orders_user']);
-        add_shortcode('dcms_orders_user', [$this, 'create_orders_user']); //no usado
+        // add_shortcode('dcms_orders_user', [$this, 'create_orders_user']); //no usado
     }
 
     // Shortcode by-courses orders user
@@ -30,21 +30,46 @@ Class Shortcode{
 
         switch (true) {
 
-            case ($order_id == 0): // List orders
+            case ($order_id == 0):
                 Enqueue::enqueue_scripts_courses_orders();
-
+                
                 ob_start();
                     include_once DCMS_ORDERS_PATH.'views/templates/by-courses/list-courses-orders.php';
                     $html_code = ob_get_contents();
                 ob_end_clean();
                 break;
+            case ($order_id > 0 ):
+                    $order = Helper::get_order_user($order_id);
+    
+                    if ( $order ){ // order exits and belongs to current user
+    
+                        switch ( $action ){
+                            case '': // Specifict order
+                                ob_start();
+                                    include_once DCMS_ORDERS_PATH.'views/templates/by-orders/order-detail.php';
+                                    $html_code = ob_get_contents();
+                                ob_end_clean();
+                                break;
+    
+                            case 'attach': // Attachments order
+                                Enqueue::enqueue_scripts_attachment();
+    
+                                ob_start();
+                                    include_once DCMS_ORDERS_PATH.'views/templates/by-orders/file-attachment.php';
+                                    $html_code = ob_get_contents();
+                                ob_end_clean();
+                                break;
+                        }
+                    }
+                    break;
+            
         }
 
         return $html_code;
     }
     
 
-    // Shortcode by-orders
+    // Shortcode by-orders -- Obsolete -- no usado
     public function create_orders_user( $atts, $content ){
 
         $order_id = $_GET['order']??0;
