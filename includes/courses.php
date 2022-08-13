@@ -39,41 +39,32 @@ class Courses{
             
             // Add additional data info_item_order to data_courses
             foreach ($data_course as $order => $data_order) {
-                
+                $info_item_order = [];
                 if ( ! $data_order['flexible'] && ! $data_order['has_deposits']){ // normal order
                     $info_item_order = $this->get_normal_info_item_order($order, $data_order['item']);
                     $data_courses[$name_course][$order]['info_item_order'] = $info_item_order;
 
-                } elseif( $data_order['flexible'] ){ // flexible order
-                    $info_item_order = $this->get_flexible_info_item_order($order, $data_order['item']);
+                } elseif ( $data_order['has_deposits'] ){ // deposit order - internal validation item has deposit
+                    $info_item_order = $this->get_deposit_info_item_order($order, $data_order['item']);
                     $data_courses[$name_course][$order]['info_item_order'] = $info_item_order;
 
-                } elseif ( $data_order['has_deposits'] ){ // deposit order
-                    $info_item_order = $this->get_deposit_info_item_order($order, $data_order['item']);
-                    $data_courses[$name_course][$order]['info_item_order'] = $info_item_order;                    
+                } elseif( $data_order['flexible'] ){ // flexible order
+                        $info_item_order = $this->get_flexible_info_item_order($order, $data_order['item']);
+                        $data_courses[$name_course][$order]['info_item_order'] = $info_item_order;
                 }
+
             }
 
             // Adding pending to items_flexible by course
-            $items_flexible = array_filter($data_course, fn($data_order) => $data_order['flexible'] == 1);
-
+            $items_flexible = array_filter($data_courses[$name_course], fn($data_order) => $data_order['flexible'] == 1);
             if ( $items_flexible ) {
-                error_log(print_r($items_flexible, true));
+                $items_flexible_with_pending = $this->add_pending_field_item_flexible($items_flexible);
+                // TODO: fusionar arrays agregando el pending
+                // $data_courses[$name_course] = array_merge($data_courses[$name_course], $items_flexible_with_pending);
             }
 
-
-            // // Accumulate pending pay for flexible items orders by course
-            // foreach ($data_course as $order => $data_order) {
-
-            //     if ( $data_order['flexible']  ){
-
-                    
-            //         $data_courses[$name_course][$order]['info_item_order']['pending'] = 10;
-            //     }
-            // }
         }
 
-        
 
         error_log(print_r($data_courses, true));
 
@@ -160,5 +151,35 @@ class Courses{
         return $info_deposit;
     }
 
+
+    // For adding pending payments in flexible orders
+    private function add_pending_field_item_flexible( $items_flexible ){
+        // Verify if all has the same money
+        $currency = $items_flexible[array_key_first($items_flexible)]['info_item_order']['order_currency'];
+        $different_currency = array_filter($items_flexible, fn($data_item) => $data_item['info_item_order']['order_currency'] != $currency);
+
+        if ( ! $different_currency ){
+            $items_flexible_add = array_reverse($items_flexible, true);
+            
+            // Initial pending
+            $first = array_key_first($items_flexible_add);
+            $total_course = floatval($items_flexible_add[$first]['info_item_order']['curso_precio']);
+            $total_paid = floatval($items_flexible_add[$first]['info_item_order']['_line_total']);
+            $accummulate_pending = $total_course - $total_paid;
+            $items_flexible_add[$first]['info_item_order']['pending'] = $accummulate_pending;
+
+            // Sustract pending
+            foreach ($items_flexible_add as $order => $_) {
+
+                if ( ! isset($items_flexible_add[$order]['info_item_order']['pending']) ){
+                    $total_paid = floatval($items_flexible_add[$order]['info_item_order']['_line_total']);                    
+                    $accummulate_pending = $accummulate_pending - $total_paid;
+                    $items_flexible_add[$order]['info_item_order']['pending'] = $accummulate_pending;
+                }
+
+            }
+        }
+        return array_reverse($items_flexible_add, true);
+    }
     
 }
