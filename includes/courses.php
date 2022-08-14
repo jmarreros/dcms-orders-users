@@ -90,9 +90,11 @@ class Courses{
         $item_order_info = $db->get_basic_item_order_info($item_order_id);
 
         // Add data to $info var
-        foreach ($item_order_info as $metadata) {
+        foreach ($item_order_info as $metadata) {            
             $info[$metadata['meta_key']] = $metadata['meta_value'];
         }
+
+        $info['post_status'] = wc_get_order_status_name($info['post_status']);
 
         return $info;
     }
@@ -107,6 +109,8 @@ class Courses{
         foreach ($item_order_flexible_info as $metadata) {
             $info[$metadata['meta_key']] = $metadata['meta_value'];
         }
+
+        $info['post_status'] = wc_get_order_status_name($info['post_status']);
 
         return $info;
     }
@@ -160,6 +164,11 @@ class Courses{
 
     // For adding pending payments in flexible orders
     private function add_pending_field_item_flexible( $items_flexible ){
+
+        // TODO, no considerar las órdenes que estan canceldas
+        error_log(print_r('Items flexible', true));
+        error_log(print_r($items_flexible, true));
+
         // Verify if all has the same money
         $currency = $items_flexible[array_key_first($items_flexible)]['info_item_order']['order_currency'];
         $different_currency = array_filter($items_flexible, fn($data_item) => $data_item['info_item_order']['order_currency'] != $currency);
