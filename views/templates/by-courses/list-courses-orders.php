@@ -21,7 +21,7 @@ defined( 'ABSPATH' ) || exit;
 
     <div>
         <ul id="list-courses">
-            <li v-for="(item, course, index) in results" :key="index">
+            <li v-for="(items, course, index) in results" :key="index">
 
                 <div class="course-name">{{ course }}</div>
                 <table class="course-detail" style="overflow-x: auto;">
@@ -32,11 +32,11 @@ defined( 'ABSPATH' ) || exit;
                         <th>Pagado</th>
                         <th>Acciones</th>
                     </tr>
-                    <tr v-for="(detail, order) of item">
+                    <tr v-for="(detail, order, index) in items" :key="index">
                         <td>{{ order }}</td>
                         <td>{{ detail.info_item_order.post_status }}</td>
-                        <td></td>
-                        <td></td>
+                        <td>{{ detail.info_item_order.pending }} {{ detail.info_item_order.order_currency }}</td>
+                        <td>{{ detail.info_item_order._line_total }} {{ detail.info_item_order.order_currency }}</td>
                         <td></td>
                     </tr>
                 </table>

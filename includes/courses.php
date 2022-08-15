@@ -61,7 +61,10 @@ class Courses{
             // Adding pending field to items_flexible by course
             if ( $has_items_flexible ){
                 // Filter only items flexible
-                $items_flexible = array_filter($data_courses[$name_course], fn($data_order) => $data_order['flexible'] == 1);
+                $items_flexible = array_filter($data_courses[$name_course], function ($data_order) {
+                    return $data_order['flexible'] == 1 && $data_order['info_item_order']['with_payment'] == 1;
+                });
+                
                 $items_flexible_with_pending = $this->add_pending_field_item_flexible($items_flexible);
 
                 // Add pending to principal array
@@ -69,9 +72,9 @@ class Courses{
                     $data_courses[$name_course][$order]['info_item_order']['pending'] = $item['info_item_order']['pending']??'';
                 }
             }
-
         }
 
+        error_log(print_r(json_encode($data_courses), true));
         error_log(print_r($data_courses, true));
 
         $res = [
@@ -94,7 +97,9 @@ class Courses{
             $info[$metadata['meta_key']] = $metadata['meta_value'];
         }
 
+        $info['with_payment'] = Helper::status_with_payment($info['post_status']);
         $info['post_status'] = wc_get_order_status_name($info['post_status']);
+        $info['pending'] = 0;
 
         return $info;
     }
@@ -110,6 +115,7 @@ class Courses{
             $info[$metadata['meta_key']] = $metadata['meta_value'];
         }
 
+        $info['with_payment'] = Helper::status_with_payment($info['post_status']);
         $info['post_status'] = wc_get_order_status_name($info['post_status']);
 
         return $info;
@@ -130,6 +136,17 @@ class Courses{
         $info['total_deposit'] = $info_deposit['total'];
         $info['pending'] = $info_deposit['pending'];
 
+        // adding partially link
+        $info['payment_url'] = '';
+        if ( wc_get_order_status_name('partially-paid') === $info['post_status'] ){
+            $data_payment =  $db->data_partial_payment($order_id);
+
+            if ( $data_payment ){
+                $url_payment = $this->build_url_payment($data_payment);
+                $info['payment_url'] = $url_payment;
+            }
+        }
+        
         return $info;
     }
 
@@ -156,7 +173,7 @@ class Courses{
 
         $info_deposit = [];
         $info_deposit['total'] = $deposit_meta['total'];
-        $info_deposit['pending'] = $info_deposit['total'] - $total_pay;
+        $info_deposit['pending'] = $info_deposit['total'] - $total_pay;        
 
         return $info_deposit;
     }
@@ -166,8 +183,8 @@ class Courses{
     private function add_pending_field_item_flexible( $items_flexible ){
 
         // TODO, no considerar las órdenes que estan canceldas
-        error_log(print_r('Items flexible', true));
-        error_log(print_r($items_flexible, true));
+        // error_log(print_r('Items flexible', true));
+        // error_log(print_r($items_flexible, true));
 
         // Verify if all has the same money
         $currency = $items_flexible[array_key_first($items_flexible)]['info_item_order']['order_currency'];
@@ -195,4 +212,16 @@ class Courses{
         return $items_flexible_add;
     }
     
+
+    // Auxiliar function for building the url partial payment
+    private function build_url_payment($data_payment){
+        if ( ! $data_payment ) return '';
+
+        $id = $data_payment['ID'];
+        $key = $data_payment['key_url'];
+
+        $url = get_home_url()."/checkout/order-pay/{$id}/?pay_for_order=true&key={$key}";
+
+        return $url;
+    }
 }

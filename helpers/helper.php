@@ -83,4 +83,12 @@ class Helper{
     return $links;
   }
 
+  // Return 1 or 0 if an status is a payment
+  public static function status_with_payment($status){
+    return in_array($status, 
+        ['wc-completed', 
+        'wc-on-hold', 
+        'wc-partially-paid', 
+        'wc-processing']) ? 1 : 0;
+  }
 }
