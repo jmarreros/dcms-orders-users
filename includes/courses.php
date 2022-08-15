@@ -180,11 +180,6 @@ class Courses{
 
     // For adding pending payments in flexible orders
     private function add_pending_field_item_flexible( $items_flexible ){
-
-        // TODO, no considerar las órdenes que estan canceldas
-        // error_log(print_r('Items flexible', true));
-        // error_log(print_r($items_flexible, true));
-
         // Verify if all has the same money
         $currency = $items_flexible[array_key_first($items_flexible)]['info_item_order']['order_currency'];
         $different_currency = array_filter($items_flexible, fn($data_item) => $data_item['info_item_order']['order_currency'] != $currency);

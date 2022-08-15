@@ -37,8 +37,8 @@ defined( 'ABSPATH' ) || exit;
                                 <span v-else>Normal</span>
                             </td>
                             <td>{{ detail.info_item_order.post_status }}</td>
-                            <td>{{ detail.info_item_order.pending }} {{ detail.info_item_order.order_currency }}</td>
-                            <td>{{ detail.info_item_order._line_total }} {{ detail.info_item_order.order_currency }}</td>
+                            <td>{{ parseFloat(detail.info_item_order.pending).toFixed(2) }} {{ detail.info_item_order.order_currency }}</td>
+                            <td>{{ parseFloat(detail.info_item_order._line_total).toFixed(2) }} {{ detail.info_item_order.order_currency }}</td>
                             <td>
                                 <section class="container-actions">
                                     <a :href="'<?= $current_url ?>?order=' + order + '&action=attach'" class="button">Adjuntar</a>
