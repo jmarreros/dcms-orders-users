@@ -1,3 +1,35 @@
+#list-courses{
+  list-style: none;  
+}
+
+#list-courses li{
+  margin-bottom: 40px;
+}
+
+#list-courses .course-name{
+  font-weight: bold;
+  font-size: 18px;
+  display: block;
+  margin-bottom: 20px;
+}
+
+#list-courses .order-number{
+  font-weight: 500;
+  background-color: #301f49;
+  color: white;
+  padding: 8px 12px;
+}
+
+#list-courses .order-number:hover{
+  cursor: pointer;
+}
+
+#courses-orders .container-actions .button{
+  font-size: 12px;
+  font-weight: 500;
+  padding: 8px;
+}
+
 .footer-container{
   display: flex;
 }

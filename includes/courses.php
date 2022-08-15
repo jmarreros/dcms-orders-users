@@ -74,8 +74,7 @@ class Courses{
             }
         }
 
-        error_log(print_r(json_encode($data_courses), true));
-        error_log(print_r($data_courses, true));
+        // error_log(print_r($data_courses, true));
 
         $res = [
             'status' => 1,

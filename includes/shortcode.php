@@ -23,6 +23,7 @@ Class Shortcode{
         $order_id = $_GET['order']??0;
         $action = $_GET['action']??'';
 
+        $current_url = Helper::get_current_url();
         $html_code = "";
 
         // Enqueu general style
