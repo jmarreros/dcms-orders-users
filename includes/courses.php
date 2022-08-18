@@ -29,6 +29,7 @@ class Courses{
         foreach ($courses as $course) {
             $data_courses[$course->course_name][$course->order_id] = [
                             'item' => $course->order_item_id,
+                            'date' => date("d/m/Y", strtotime($course->post_date)),
                             'flexible' => $course->flexible,
                             'has_deposits' => intval( ! $course->flexible && $db->order_has_deposits($course->order_id) )
                         ];
@@ -74,7 +75,7 @@ class Courses{
             }
         }
 
-        // error_log(print_r($data_courses, true));
+        error_log(print_r($data_courses, true));
 
         $res = [
             'status' => 1,

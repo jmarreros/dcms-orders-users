@@ -23,7 +23,7 @@ defined( 'ABSPATH' ) || exit;
                     <table class="course-detail">
                         <tr>
                             <th>Orden</th>
-                            <th>Tipo</th>
+                            <th>Fecha</th>
                             <th>Estado</th>
                             <th>Pendiente</th>
                             <th>Pagado</th>
@@ -31,11 +31,7 @@ defined( 'ABSPATH' ) || exit;
                         </tr>
                         <tr v-for="(detail, order, index) in items" :key="index">
                             <td><a class="order-number" :href="'<?= $current_url ?>?order=' + order" >{{ order }}</a></td>
-                            <td>
-                                <span v-if="detail.flexible==1">Flexible</span>
-                                <span v-else-if="detail.has_deposits==1">Parcial</span>
-                                <span v-else>Normal</span>
-                            </td>
+                            <td>{{ detail.date }}</td>
                             <td>{{ detail.info_item_order.post_status }}</td>
                             <td>{{ parseFloat(detail.info_item_order.pending).toFixed(2) }} {{ detail.info_item_order.order_currency }}</td>
                             <td>{{ parseFloat(detail.info_item_order._line_total).toFixed(2) }} {{ detail.info_item_order.order_currency }}</td>

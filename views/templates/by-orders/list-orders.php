@@ -3,6 +3,11 @@
  * Custom template for listing orders using Vue.js and Ajax
  *
  *  $current_url : Current page url
+ *  
+ * NOTA
+ * =====
+ * NO SE ESTA UTILIZANDO ESTE CÓDIGO PORQUE SE CAMBIÓ EL SHORTCODE, REVISAR CARPETA by_courses
+ * 
  */
 
 defined( 'ABSPATH' ) || exit;
