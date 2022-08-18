@@ -41,6 +41,10 @@ class Courses{
 
             // Add additional data info_item_order to data_courses
             foreach ($data_course as $order => $data_order) {
+                error_log(print_r('Vueltas', true));
+                error_log(print_r($order, true));
+                error_log(print_r($data_order, true));
+
                 $info_item_order = [];
 
                 if( $data_order['flexible'] ){ // flexible order, compare order item level
@@ -66,16 +70,21 @@ class Courses{
                     return $data_order['flexible'] == 1 && $data_order['info_item_order']['with_payment'] == 1;
                 });
                 
-                $items_flexible_with_pending = $this->add_pending_field_item_flexible($items_flexible);
+                if ( $items_flexible ){
+                    $items_flexible_with_pending = $this->add_pending_field_item_flexible($items_flexible);
 
-                // Add pending to principal array
-                foreach ($items_flexible_with_pending as $order => $item) {
-                    $data_courses[$name_course][$order]['info_item_order']['pending'] = $item['info_item_order']['pending']??'';
+                    // Add pending to principal array
+                    foreach ($items_flexible_with_pending as $order => $item) {
+                        $data_courses[$name_course][$order]['info_item_order']['pending'] = $item['info_item_order']['pending']??'';
+                    }    
+                } else {
+                    $data_courses[$name_course][$order]['info_item_order']['pending'] = 0;
                 }
+
             }
         }
 
-        error_log(print_r($data_courses, true));
+        // error_log(print_r($data_courses, true));
 
         $res = [
             'status' => 1,

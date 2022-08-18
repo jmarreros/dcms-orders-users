@@ -135,7 +135,7 @@ class Database{
                 ON oi.order_item_id = oim.order_item_id
                 WHERE oi.order_item_name = '{$flexible_product_name}' AND meta_key = 'curso_nombre'
                 ORDER BY order_id DESC";
-
+                        
         return $this->wpdb->get_results($sql);
     }
 
