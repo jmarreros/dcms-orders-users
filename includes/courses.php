@@ -24,7 +24,7 @@ class Courses{
         $current_user_id = get_current_user_id();
         $courses = $db->get_courses_order_user($current_user_id);
 
-        // Group courses by name with addinional fields
+        // Group courses by name with additional fields
         $data_courses = [];
         foreach ($courses as $course) {
             $data_courses[$course->course_name][$course->order_id] = [
@@ -41,9 +41,6 @@ class Courses{
 
             // Add additional data info_item_order to data_courses
             foreach ($data_course as $order => $data_order) {
-                error_log(print_r('Vueltas', true));
-                error_log(print_r($order, true));
-                error_log(print_r($data_order, true));
 
                 $info_item_order = [];
 
@@ -54,6 +51,7 @@ class Courses{
 
                 } elseif ( $data_order['has_deposits'] ){ // deposit order - compare order level
                     $info_item_order = $this->get_deposit_info_item_order($order, $data_order['item']);
+                    $info_item_order['_line_total'] = $info_item_order['total_deposit'];
                     $data_courses[$name_course][$order]['info_item_order'] = $info_item_order;
 
                 } else { // normal order item
@@ -181,8 +179,8 @@ class Courses{
         }
 
         $info_deposit = [];
-        $info_deposit['total'] = $deposit_meta['total'];
-        $info_deposit['pending'] = $info_deposit['total'] - $total_pay;        
+        $info_deposit['pending'] = $deposit_meta['total'] - $total_pay;
+        $info_deposit['total'] = $total_pay;
 
         return $info_deposit;
     }

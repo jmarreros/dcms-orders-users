@@ -26,7 +26,7 @@ Class Shortcode{
         $current_url = Helper::get_current_url();
         $html_code = "";
 
-        // Enqueu general style
+        // Enqueue general style
         Enqueue::enqueue_style();
 
         switch (true) {
@@ -45,7 +45,7 @@ Class Shortcode{
                     if ( $order ){ // order exits and belongs to current user
     
                         switch ( $action ){
-                            case '': // Specifict order
+                            case '': // Specific order
                                 ob_start();
                                     include_once DCMS_ORDERS_PATH.'views/templates/by-orders/order-detail.php';
                                     $html_code = ob_get_contents();
