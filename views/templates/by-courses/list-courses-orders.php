@@ -14,8 +14,8 @@ defined( 'ABSPATH' ) || exit;
             Pagos Flexibles <i class="fa fa-caret-down"></i>
         </a>
         <div id="drop-flexible-payment" class="dropdown-content">
-            <a href="/producto/pago-flexible/?own=1">Listar sólo tus cursos</a>
-            <a href="/producto/pago-flexible/?own=0">Listar nuevos cursos</a>
+            <a href="/producto/pago-flexible/?own=1">Para mis cursos recientes</a>
+            <a href="/producto/pago-flexible/?own=0">Para nuevos cursos</a>
         </div>
     </div>
 </section>
