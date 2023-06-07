@@ -9,9 +9,15 @@ defined( 'ABSPATH' ) || exit;
 
 ?>
 <section class="flexible-payment">
-  <a href="/producto/pago-flexible/" class="button" target="_blank">
-    Pagos Flexibles
-  </a>
+    <div class="dropdown-container">
+        <a onclick="dropFlexiblePayment()" class="button btn-drop">
+            Pagos Flexibles <i class="fa fa-caret-down"></i>
+        </a>
+        <div id="drop-flexible-payment" class="dropdown-content">
+            <a href="/producto/pago-flexible/?own=1">Listar sólo tus cursos</a>
+            <a href="/producto/pago-flexible/?own=0">Listar nuevos cursos</a>
+        </div>
+    </div>
 </section>
 <div id="courses-orders">
     <div>
